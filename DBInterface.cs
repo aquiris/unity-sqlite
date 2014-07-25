@@ -20,7 +20,6 @@ namespace aquiris.tools.dbinterface
 		}
 
 		public IDataReader Select(string p_column, string p_parameter){
-			Dictionary<string,string> result = new Dictionary<string, string>();
 			return ExecuteQuery("SELECT `"+p_column+"`,"+p_parameter+" FROM `"+m_table+"`  ORDER BY `rowid` ASC;");
 		}
 
