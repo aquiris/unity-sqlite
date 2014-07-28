@@ -3,9 +3,9 @@ using System.Data.Common;
 using Mono.Data.SqliteClient;
 using System.Collections.Generic;
 
-namespace aquiris.tools.dbinterface
+namespace Aquiris.Tools.DbInterface
 {
-	public class DBInterface {
+	public class DbInterface {
 		public string Table{set{m_table = value;}}
 
 		private SqliteConnection m_connection;
@@ -14,21 +14,21 @@ namespace aquiris.tools.dbinterface
 		private IDbCommand m_command;
 		private IDataReader m_reader;
 
-		public DBInterface(string p_database){
+		public DbInterface(string p_database){
 			m_connection = new SqliteConnection("URI=file:" + p_database);
 			m_command = m_connection.CreateCommand();
 		}
 
 		public IDataReader Select(string p_column, string p_parameter){
-			return ExecuteQuery("SELECT `"+p_column+"`,"+p_parameter+" FROM `"+m_table+"`  ORDER BY `rowid` ASC;");
+			return ExecuteQuery("SELECT ["+p_column+"],"+p_parameter+" FROM ["+m_table+"]  ORDER BY `rowid` ASC;");
 		}
 
 		public void Delete(string p_rowid){
-			ExecuteQuery("DELETE FROM `"+m_table+"` WHERE rowid="+p_rowid+";");
+			ExecuteQuery("DELETE FROM ["+m_table+"] WHERE rowid="+p_rowid+";");
 		}
 
 		public void Update(int p_rowid, string p_column, string p_data){
-			ExecuteQuery("UPDATE `"+m_table+"` SET `"+p_column+"`="+p_data+" WHERE rowid="+p_rowid+";");
+			ExecuteQuery("UPDATE ["+m_table+"] SET \""+p_column+"\"=\""+p_data+"\" WHERE rowid="+p_rowid+";");
 		}
 
 		public void Insert(Dictionary<string, string> p_entries){
@@ -42,7 +42,7 @@ namespace aquiris.tools.dbinterface
 				keys += "'" + pair.Key + "'";
 				values += "'" + pair.Value + "'";
 			}
-			ExecuteQuery("INSERT INTO `" + m_table + "`(" + keys + ") VALUES (" + values + ");");
+			ExecuteQuery("INSERT INTO [" + m_table + "](" + keys + ") VALUES (" + values + ");");
 		}
 
 		public IDataReader ExecuteQuery(string p_query){
