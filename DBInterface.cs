@@ -25,15 +25,36 @@ namespace Aquiris.Tools.DbInterface
 			return ExecuteQuery("SELECT "+p_select+" FROM "+m_table+"  ORDER BY `rowid` ASC;");
 		}
 
-		public void Delete(string p_rowid){
-			ExecuteQuery("DELETE FROM "+m_table+" WHERE rowid="+p_rowid+";");
+		public void Delete(string p_id, string p_table = null){
+			if(string.IsNullOrEmpty(p_table)){
+				p_table = m_table;
+			}
+			ExecuteQuery("DELETE FROM "+p_table+" WHERE id="+p_id+";");
 		}
 
 		public void Update(int p_rowid, string p_column, string p_data){
 			ExecuteQuery("UPDATE "+m_table+" SET \""+p_column+"\"=\""+p_data+"\" WHERE rowid="+p_rowid+";");
 		}
 
-		public void Insert(Dictionary<string, string> p_entries){
+		public void CreateTable(string p_tableName, string[] p_fields){
+			string fields = "";
+			foreach(string field in p_fields){
+				if(!string.IsNullOrEmpty(fields)){
+					fields += ", ";
+				}
+				fields += "`" + field + "` TEXT";
+			}
+			ExecuteQuery("CREATE TABLE `"+p_tableName+"` (`id`INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "+fields+");");
+		}
+
+		public void DropTable(string p_tableName){
+			ExecuteQuery("DROP TABLE `"+p_tableName+"`;");
+		}
+
+		public void Insert(Dictionary<string, string> p_entries, string p_table = null){
+			if(string.IsNullOrEmpty(p_table)){
+				p_table = m_table;
+			}
 			string keys = "";
 			string values = "";
 			foreach(KeyValuePair<string,string> pair in p_entries){
@@ -44,7 +65,7 @@ namespace Aquiris.Tools.DbInterface
 				keys += "'" + pair.Key + "'";
 				values += "'" + pair.Value + "'";
 			}
-			ExecuteQuery("INSERT INTO " + m_table + "(" + keys + ") VALUES (" + values + ");");
+			ExecuteQuery("INSERT INTO " + p_table + "(" + keys + ") VALUES (" + values + ");");
 		}
 
 		public IDataReader ExecuteQuery(string p_query){
