@@ -6,37 +6,29 @@ using System.Collections.Generic;
 namespace Aquiris.Tools.DbInterface
 {
 	public class DbInterface {
-		public string Table{set{m_table = "["+value+"]";}}
-
 		private SqliteConnection m_connection;
 		private string m_database;
-		private string m_table;
 		private IDbCommand m_command;
 		private IDataReader m_reader;
 
-		public DbInterface(string p_databaseFilePath, string p_table){
+		public DbInterface(string p_databaseFilePath){
 			m_connection = new SqliteConnection("URI=file:" + p_databaseFilePath);
 			m_command = m_connection.CreateCommand();
-
-			Table = p_table;
 		}
 
-		public IDataReader Select(string p_select){
-			return ExecuteQuery("SELECT "+p_select+" FROM "+m_table+"  ORDER BY `rowid` ASC;");
+		public IDataReader Select(string p_table, string p_select){
+			return ExecuteQuery("SELECT "+p_select+" FROM "+p_table+"  ORDER BY `rowid` ASC;");
 		}
 
-		public void Delete(string p_id, string p_table = null){
-			if(string.IsNullOrEmpty(p_table)){
-				p_table = m_table;
-			}
+		public void Delete(string p_table, string p_id){
 			ExecuteQuery("DELETE FROM "+p_table+" WHERE id="+p_id+";");
 		}
 
-		public void Update(int p_rowid, string p_column, string p_data){
-			ExecuteQuery("UPDATE "+m_table+" SET \""+p_column+"\"=\""+p_data+"\" WHERE rowid="+p_rowid+";");
+		public void Update(string p_table, int p_rowid, string p_column, string p_data){
+			ExecuteQuery("UPDATE "+p_table+" SET \""+p_column+"\"=\""+p_data+"\" WHERE rowid="+p_rowid+";");
 		}
 
-		public void CreateTable(string p_tableName, string[] p_fields){
+		public void CreateTable(string p_table, string[] p_fields){
 			string fields = "";
 			foreach(string field in p_fields){
 				if(!string.IsNullOrEmpty(fields)){
@@ -44,17 +36,14 @@ namespace Aquiris.Tools.DbInterface
 				}
 				fields += "`" + field + "` TEXT";
 			}
-			ExecuteQuery("CREATE TABLE `"+p_tableName+"` (`id`INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "+fields+");");
+			ExecuteQuery("CREATE TABLE `"+p_table+"` (`id`INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "+fields+");");
 		}
 
-		public void DropTable(string p_tableName){
-			ExecuteQuery("DROP TABLE `"+p_tableName+"`;");
+		public void DropTable(string p_table){
+			ExecuteQuery("DROP TABLE `"+p_table+"`;");
 		}
 
-		public void Insert(Dictionary<string, string> p_entries, string p_table = null){
-			if(string.IsNullOrEmpty(p_table)){
-				p_table = m_table;
-			}
+		public void Insert(string p_table, Dictionary<string, string> p_entries){
 			string keys = "";
 			string values = "";
 			foreach(KeyValuePair<string,string> pair in p_entries){
