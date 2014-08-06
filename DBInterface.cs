@@ -2,9 +2,10 @@
 using System.Data.Common;
 using Mono.Data.SqliteClient;
 using System.Collections.Generic;
+using UnityEngine;
 
-namespace Aquiris.Tools.DbInterface
-{
+namespace Aquiris.Tools.DbInterface {
+
 	public class DbInterface {
 		private SqliteConnection m_connection;
 		private string m_database;
@@ -16,16 +17,20 @@ namespace Aquiris.Tools.DbInterface
 			m_command = m_connection.CreateCommand();
 		}
 
-		public IDataReader Select(string p_table, string p_select){
-			return ExecuteQuery("SELECT "+p_select+" FROM "+p_table+"  ORDER BY `rowid` ASC;");
+		public IDataReader Select(string p_table, string p_select, string p_where = null){
+			string where = "";
+			if(!string.IsNullOrEmpty(p_where)){
+				where = " WHERE "+p_where;
+			}
+			return ExecuteQuery("SELECT "+p_select+" FROM "+p_table+where+" ORDER BY `rowid` ASC;");
 		}
 
 		public void Delete(string p_table, string p_id){
 			ExecuteQuery("DELETE FROM "+p_table+" WHERE id="+p_id+";");
 		}
 
-		public void Update(string p_table, int p_rowid, string p_column, string p_data){
-			ExecuteQuery("UPDATE "+p_table+" SET \""+p_column+"\"=\""+p_data+"\" WHERE rowid="+p_rowid+";");
+		public void Update(string p_table, string p_set, string p_where){
+			ExecuteQuery("UPDATE "+p_table+" SET "+p_set+" WHERE "+p_where+";");
 		}
 
 		public void CreateTable(string p_table, string[] p_fields){
