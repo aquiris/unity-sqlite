@@ -1,8 +1,6 @@
 ﻿using System.Data;
-using System.Data.Common;
 using Mono.Data.SqliteClient;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Aquiris.Tools.DbInterface {
 
