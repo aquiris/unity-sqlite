@@ -19,6 +19,7 @@ namespace Aquiris.Tools.Database.SQLite.Model {
 		public abstract void Remove();
 		public abstract void Add();
 
+		//_id should be already setted
 		protected Dictionary<string,string> Load() {
 			Dictionary<string,string> result = new Dictionary<string, string>();
 			IDataReader reader = _database.Select(Table, "*", "id=" + _id);
@@ -46,7 +47,7 @@ namespace Aquiris.Tools.Database.SQLite.Model {
 			_database.Update(Table, set, where);
 		}
 
-		public List<Dictionary<string,string>> GetAll(string p_where = null) {
+		protected List<Dictionary<string,string>> GetAllAttributes(string p_where = null) {
 			List<Dictionary<string,string>> result = new List<Dictionary<string, string>>();
 			IDataReader reader = _database.Select(Table, "*", p_where);
 			while (reader.Read()) {
