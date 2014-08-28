@@ -19,8 +19,8 @@ namespace Aquiris.Tools.Database.SQLite.Model {
 		public abstract void Remove();
 		public abstract void Add();
 
-		//_id should be already setted
-		protected Dictionary<string,string> Load() {
+		protected Dictionary<string,string> Load(int p_id) {
+			_id = p_id;
 			Dictionary<string,string> result = new Dictionary<string, string>();
 			IDataReader reader = _database.Select(Table, "*", "id=" + _id);
 			while (reader.Read()) {
