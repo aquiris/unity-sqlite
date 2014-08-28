@@ -4,25 +4,21 @@ using System.Collections.Generic;
 
 namespace Aquiris.Tools.Database.SQLite.Model {
 	public abstract class Model {
-		public int Id { get { return _id; } }
+		public int Id { get; private set; }
 
-		protected int _id;
-
-		protected abstract SQLiteDatabase _database { get; }
-
-		public abstract string Table { get; }
+		abstract public void Remove();
+		abstract public string Table { get; }
+		abstract public void Add();
+		abstract protected SQLiteDatabase _database { get; }
 
 		protected void Add(Dictionary<string, string> p_newEntry) {
 			_database.Insert(Table, p_newEntry);
 		}
 
-		public abstract void Remove();
-		public abstract void Add();
-
 		protected Dictionary<string,string> Load(int p_id) {
-			_id = p_id;
+			Id = p_id;
 			Dictionary<string,string> result = new Dictionary<string, string>();
-			IDataReader reader = _database.Select(Table, "*", "id=" + _id);
+			IDataReader reader = _database.Select(Table, "*", "id=" + Id);
 			while (reader.Read()) {
 				for (int i=0; i<reader.FieldCount; i++) {
 					result.Add(reader.GetName(i).ToString(), reader [i].ToString());
@@ -31,7 +27,7 @@ namespace Aquiris.Tools.Database.SQLite.Model {
 			return result;
 		}
 
-		protected void Save(Dictionary<string, string> p_newEntry, string p_where = null) {
+		protected virtual void Save(Dictionary<string, string> p_newEntry, string p_where = null) {
 			string set = "";
 			foreach (var pair in p_newEntry) {
 				if (!string.IsNullOrEmpty(set)) {
@@ -39,7 +35,7 @@ namespace Aquiris.Tools.Database.SQLite.Model {
 				}
 				set += pair.Key + "='" + pair.Value + "'";
 			}
-			string where = "id=" + _id;
+			string where = "id=" + Id;
 			if (!string.IsNullOrEmpty(p_where)) {
 				where = p_where;
 			}
