@@ -11,8 +11,9 @@ namespace Aquiris.Tools.Database.SQLite.Model {
 		abstract public void Add();
 		abstract protected SQLiteDatabase _database { get; }
 
-		protected void Add(Dictionary<string, string> p_newEntry) {
-			_database.Insert(Table, p_newEntry);
+		protected int Add(Dictionary<string, string> p_newEntry) {
+            Id = _database.Insert(Table, p_newEntry);
+            return Id;
 		}
 
 		protected Dictionary<string,string> Load(int p_id) {

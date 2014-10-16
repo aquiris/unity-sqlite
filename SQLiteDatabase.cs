@@ -9,6 +9,8 @@ namespace Aquiris.Tools.Database.SQLite {
 		private IDbCommand m_command;
 		private IDataReader m_reader;
 
+        private int m_lastInsertedRowId;
+
 		public SQLiteDatabase(string p_databaseFilePath) {
 			m_connection = new SqliteConnection("URI=file:" + p_databaseFilePath);
 			m_command = m_connection.CreateCommand();
@@ -45,7 +47,7 @@ namespace Aquiris.Tools.Database.SQLite {
 			ExecuteQuery("DROP TABLE `" + p_table + "`;");
 		}
 
-		public void Insert(string p_table, Dictionary<string, string> p_entries) {
+		public int Insert(string p_table, Dictionary<string, string> p_entries) {
 			string keys = "";
 			string values = "";
 			foreach (KeyValuePair<string,string> pair in p_entries) {
@@ -57,14 +59,17 @@ namespace Aquiris.Tools.Database.SQLite {
 				values += "'" + pair.Value + "'";
 			}
 			ExecuteQuery("INSERT INTO " + p_table + "(" + keys + ") VALUES (" + values + ");");
+
+            return m_lastInsertedRowId;
 		}
 
 		public IDataReader ExecuteQuery(string p_query) {
 			m_command.CommandText = p_query;
 			m_connection.Open();
 			m_reader = m_command.ExecuteReader();
+            m_lastInsertedRowId = m_connection.LastInsertRowId;
 			m_connection.Close();
-			return m_reader;
+            return m_reader;
 		}
 	}
 }
