@@ -4,7 +4,7 @@ using System.IO;
 using System.Data;
 using System.Collections.Generic;
 
-namespace Aquiris.Tools.Database.SQLite.Merger
+namespace Aquiris.SQLite.Merger
 {
     public class SQLiteMerger
     {
