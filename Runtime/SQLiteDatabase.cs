@@ -6,10 +6,16 @@ namespace Aquiris.SQLite
     {
         private readonly SqliteConnection _connection = default;
 
-        public SQLiteDatabase(string databasePath)
+        public SQLiteDatabase(string databasePath, string databasePassword = null)
         {
-            
-            _connection = new SqliteConnection(databasePath);
+            SqliteConnectionStringBuilder connectionStringBuilder = new SqliteConnectionStringBuilder
+            {
+                Uri = databasePath,
+                Password = databasePassword
+            };
+            _connection = new SqliteConnection(connectionStringBuilder.ToString());
         }
+        
+        
     }
 }
