@@ -21,7 +21,7 @@ namespace Aquiris.SQLite.Tables
         public void AddColumn(SQLiteTable table, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
             string statement = $"ALTER TABLE {table.name} ADD COLUMN {ToString()};";
-            _runner.Run(new ColumnQuery(statement), database, onCompleteAction);
+            _runner.Run(new SQLiteQuery(statement), database, onCompleteAction);
         }
 
         public override string ToString()
@@ -41,13 +41,6 @@ namespace Aquiris.SQLite.Tables
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null);
             }
-        }
-
-        private readonly struct ColumnQuery : ISQLiteQuery
-        {
-            public string statement { get; }
-
-            public ColumnQuery(string statement) => this.statement = statement;
         }
     }
 }

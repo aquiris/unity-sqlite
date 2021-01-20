@@ -22,28 +22,28 @@ namespace Aquiris.SQLite
         public void Create(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
             string statement = $"CREATE TABLE {name} {CreateColumnsStatement()};";
-            _runner.Run(new TableQuery(statement), database, onCompleteAction);
+            _runner.Run(new SQLiteQuery(statement), database, onCompleteAction);
         }
 
         [UsedImplicitly]
         public void CreateIfNotExists(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
             string statement = $"CREATE TABLE IF NOT EXISTS {name} {CreateColumnsStatement()};";
-            _runner.Run(new TableQuery(statement), database, onCompleteAction);
+            _runner.Run(new SQLiteQuery(statement), database, onCompleteAction);
         }
 
         [UsedImplicitly]
         public void RenameTable(string newName, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
             string statement = $"ALTER TABLE RENAME {name} {newName};";
-            _runner.Run(new TableQuery(statement), database, onCompleteAction);
+            _runner.Run(new SQLiteQuery(statement), database, onCompleteAction);
         }
 
         [UsedImplicitly]
         public void DropTable(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
             string statement = $"DROP TABLE {name};";
-            _runner.Run(new TableQuery(statement), database, onCompleteAction);
+            _runner.Run(new SQLiteQuery(statement), database, onCompleteAction);
         }
 
         private string CreateColumnsStatement()
@@ -62,13 +62,6 @@ namespace Aquiris.SQLite
                 statement += Environment.NewLine;
             }
             return statement;
-        }
-
-        private readonly struct TableQuery : ISQLiteQuery
-        {
-            public string statement { get; }
-
-            public TableQuery(string statement) => this.statement = statement;
         }
     }
 }
