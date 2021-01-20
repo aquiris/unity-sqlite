@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Mono.Data.Sqlite;
 
-namespace Aquiris.SQLite {
+namespace Aquiris.SQLite.Old {
 	public class SQLiteDatabase {
 		private SqliteConnection m_connection;
 		private string m_database;
@@ -67,7 +67,7 @@ namespace Aquiris.SQLite {
 			m_command.CommandText = p_query;
 			m_connection.Open();
 			m_reader = m_command.ExecuteReader();
-            m_lastInsertedRowId = m_connection.LastInsertRowId;
+            //m_lastInsertedRowId = m_connection.LastInsertRowId;
 			m_connection.Close();
             return m_reader;
 		}
