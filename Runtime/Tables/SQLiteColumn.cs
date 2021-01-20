@@ -10,14 +10,17 @@ namespace Aquiris.SQLite.Tables
         
         public string name { get; }
         public SQLiteDataType dataType { get; }
+        
+        internal string bindingName { get; }
 
         public SQLiteColumn(string name, SQLiteDataType dataType)
         {
             this.name = name;
             this.dataType = dataType;
+            bindingName = $"@{name}";
         }
-        
-        public override string ToString()
+
+        internal string GetTableDeclaration()
         {
             return $"{name} {GetTypeString()}";
         }
