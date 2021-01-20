@@ -160,6 +160,35 @@ namespace Aquiris.SQLite.Tests
             Assert.IsTrue(waiter.WaitOne(Constants.waitTimeOut));
         }
 
+        [Test]
+        public void TestAddColumnSuccess()
+        {
+            AutoResetEvent waiter = new AutoResetEvent(false);
+
+            CreateDatabase();
+            _database.Open();
+            
+            SQLiteTable table = GetTable();
+            table.Create(_database, result =>
+            {
+                Assert.IsTrue(result.success);
+                waiter.Set();
+            });
+            
+            Assert.IsTrue(waiter.WaitOne(Constants.waitTimeOut));
+
+            SQLiteColumn column = new SQLiteColumn("Column4", SQLiteDataType.Text);
+            table.AddColumn(_database, column, result =>
+            {
+                Assert.IsTrue(result.success);
+                // here we're hoping that the query execution was successful 
+                Assert.AreEqual(column, table.columns[table.columns.Length - 1]);
+                waiter.Set();
+            });
+            
+            Assert.IsTrue(waiter.WaitOne(Constants.waitTimeOut));
+        }
+
         private static SQLiteTable GetTable()
         {
             SQLiteColumn[] columns = {

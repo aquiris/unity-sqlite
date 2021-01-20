@@ -8,27 +8,29 @@ namespace Aquiris.SQLite
     public struct SQLiteTable
     {
         private static readonly SQLiteTableStatementRunner _runner = new SQLiteTableStatementRunner();
+
+        private SQLiteColumn[] _columns;
         
         [UsedImplicitly] public string name { get; private set; }
-        [UsedImplicitly] public SQLiteColumn[] columns { get; }
+        [UsedImplicitly] public SQLiteColumn[] columns => _columns;
         
         public SQLiteTable(string name, SQLiteColumn[] columns)
         {
             this.name = name;
-            this.columns = columns;
+            _columns = columns;
         }
         
         [UsedImplicitly]
         public void Create(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            string statement = $"CREATE TABLE {name} {CreateColumnsStatement()};";
+            string statement = $"CREATE TABLE {name} {CreateColumnsStatement(_columns)};";
             _runner.Run(new TableQuery(statement), database, onCompleteAction);
         }
 
         [UsedImplicitly]
         public void CreateIfNotExists(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            string statement = $"CREATE TABLE IF NOT EXISTS {name} {CreateColumnsStatement()};";
+            string statement = $"CREATE TABLE IF NOT EXISTS {name} {CreateColumnsStatement(_columns)};";
             _runner.Run(new TableQuery(statement), database, onCompleteAction);
         }
 
@@ -46,8 +48,18 @@ namespace Aquiris.SQLite
             string statement = $"DROP TABLE {name};";
             _runner.Run(new TableQuery(statement), database, onCompleteAction);
         }
-
-        private string CreateColumnsStatement()
+        
+        public void AddColumn(SQLiteDatabase database, SQLiteColumn column, Action<QueryResult> onCompleteAction)
+        {
+            string statement = $"ALTER TABLE {name} ADD COLUMN {column};";
+            _runner.Run(new TableQuery(statement), database, onCompleteAction);
+            
+            int previousLength = _columns.Length;
+            Array.Resize(ref _columns, previousLength + 1);
+            _columns[previousLength] = column;
+        }
+        
+        private static string CreateColumnsStatement(SQLiteColumn[] columns)
         {
             string statement = "(";
             for (int index = 0; index < columns.Length; index++)

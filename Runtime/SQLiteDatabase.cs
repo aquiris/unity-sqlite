@@ -37,7 +37,7 @@ namespace Aquiris.SQLite
 #if !UNITY_INCLUDE_TESTS
             ThreadSafety.Initialize();
 #endif
-            
+
             SqliteConnectionStringBuilder connectionStringBuilder = new SqliteConnectionStringBuilder
             {
                 DataSource = $"{filePath}",
