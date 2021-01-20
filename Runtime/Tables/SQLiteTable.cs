@@ -32,6 +32,13 @@ namespace Aquiris.SQLite
             _runner.Run(new TableQuery(statement), database, onCompleteAction);
         }
 
+        [UsedImplicitly]
+        public void DropTable(SQLiteDatabase database, Action onCompleteAction)
+        {
+            string statement = $"DROP TABLE {name};";
+            _runner.Run(new TableQuery(statement), database, onCompleteAction);
+        }
+
         private string CreateColumnsStatement()
         {
             string statement = "(";
