@@ -1,8 +1,8 @@
 ﻿using System.Data;
-using Mono.Data.SqliteClient;
 using System.Collections.Generic;
+using Mono.Data.Sqlite;
 
-namespace Aquiris.Tools.Database.SQLite {
+namespace Aquiris.SQLite {
 	public class SQLiteDatabase {
 		private SqliteConnection m_connection;
 		private string m_database;
