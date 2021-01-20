@@ -1,15 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
+using Aquiris.SQLite.Threading;
+using JetBrains.Annotations;
 using Mono.Data.Sqlite;
 using UnityEngine;
 
 namespace Aquiris.SQLite
 {
-    internal interface ISQLiteQuery
-    {
-        string statement { get; }
-    }
-    
     internal abstract class SQLiteStatementRunner
     {
         private static readonly object _lock = new object();
@@ -23,7 +21,7 @@ namespace Aquiris.SQLite
             _completedAction = Completed;
         }
         
-        protected void Run(ISQLiteQuery query, SQLiteDatabase database)
+        protected void Run(SQLiteQuery query, SQLiteDatabase database)
         {
             WorkItemInfo state = new WorkItemInfo
             {
@@ -46,6 +44,7 @@ namespace Aquiris.SQLite
                 using (SqliteCommand command = info.database.CreateCommand())
                 {
                     command.CommandText = info.query.statement;
+                    PrepareParameters(command, info.query);
                     try
                     {
                         _result.value = ExecuteThreaded(command);
@@ -75,10 +74,47 @@ namespace Aquiris.SQLite
 
         private void Completed() => Completed(_result);
 
+        private static void PrepareParameters(SqliteCommand command, SQLiteQuery query)
+        {
+            for (int index = 0; index < query.bindingsCount; index++)
+            {
+                KeyValuePair<string, object> binding = query.bindings[index];
+                command.Parameters.AddWithValue(binding.Key, binding.Value);
+            }
+            command.Prepare();
+        }
+
         private struct WorkItemInfo
         {
             public SQLiteDatabase database;
-            public ISQLiteQuery query;
+            public SQLiteQuery query;
         }
     }
 }
+    
+    internal struct SQLiteQuery
+    {
+        private static readonly KeyValuePair<string, object>[] _bindingsBuffer = new KeyValuePair<string, object>[100]; // max 
+
+        public string statement;
+        
+        public int bindingsCount { get; private set; }
+        public IReadOnlyList<KeyValuePair<string, object>> bindings => _bindingsBuffer;
+
+        public SQLiteQuery(string statement)
+        {
+            this.statement = statement;
+            bindingsCount = 0;
+        }
+
+        [UsedImplicitly]
+        public void Add(KeyValuePair<string, object> binding)
+        {
+            _bindingsBuffer[bindingsCount] = binding;
+            bindingsCount += 1;
+        }
+
+        [UsedImplicitly]
+        public void Add(string column, object value) => Add(new KeyValuePair<string, object>(column, value));
+    }
+    

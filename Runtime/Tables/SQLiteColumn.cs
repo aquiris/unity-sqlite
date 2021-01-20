@@ -37,3 +37,4 @@ namespace Aquiris.SQLite.Tables
         }
     }
 }
+
