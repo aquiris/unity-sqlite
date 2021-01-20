@@ -1,8 +1,9 @@
-﻿using Aquiris.SQLite;
+﻿using System.IO;
+using Aquiris.SQLite;
 using Aquiris.SQLite.Tests.Shared;
 using NUnit.Framework;
 
-namespace Tests
+namespace Aquiris.SQLite.Tests
 {
     public class DatabaseCreationTests : BaseTestClass
     {
@@ -11,6 +12,12 @@ namespace Tests
         {
             CreateResult result = SQLiteDatabase.Create(Constants.databaseFilePath);
             Assert.AreEqual(CreateResult.Create, result);
+            
+            File.Delete(Constants.databaseFilePath);
+
+            result = SQLiteDatabase.Create(Constants.databaseFilePath, out SQLiteDatabase database);
+            Assert.AreEqual(CreateResult.Create, result);
+            Assert.IsNotNull(database, "Database should not be null here");
         }
 
         [Test]
