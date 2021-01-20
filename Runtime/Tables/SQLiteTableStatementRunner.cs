@@ -7,7 +7,7 @@ namespace Aquiris.SQLite.Runtime.Tables
     {
         private Action<QueryResult> _callbackAction = default;
         
-        public void Run(ISQLiteQuery query, SQLiteDatabase database, Action<QueryResult> callbackAction)
+        public void Run(SQLiteQuery query, SQLiteDatabase database, Action<QueryResult> callbackAction)
         {
             _callbackAction = callbackAction;
             Run(query, database);
