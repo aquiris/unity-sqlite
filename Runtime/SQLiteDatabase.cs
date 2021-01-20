@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.IO;
-using Aquiris.SQLite.Threading;
 using JetBrains.Annotations;
 using Mono.Data.Sqlite;
 using UnityEngine;
@@ -33,16 +32,19 @@ namespace Aquiris.SQLite
     {
         private readonly SqliteConnection _connection = default;
         
-        public SQLiteDatabase(string databasePath, string databasePassword = null)
+        public SQLiteDatabase(string filePath)
         {
+#if !UNITY_INCLUDE_TESTS
             ThreadSafety.Initialize();
-            
+#endif
+
             SqliteConnectionStringBuilder connectionStringBuilder = new SqliteConnectionStringBuilder
             {
-                Uri = databasePath,
-                Password = databasePassword
+                DataSource = $"{filePath}",
+                Version = 3,
             };
-            _connection = new SqliteConnection(connectionStringBuilder.ToString());
+            string connectionString = connectionStringBuilder.ToString();
+            _connection = new SqliteConnection(connectionString);
         }
 
         [UsedImplicitly]
@@ -58,7 +60,7 @@ namespace Aquiris.SQLite
             catch (Exception ex)
             {
 #if UNITY_EDITOR
-                Debug.LogError(ex);
+                Debug.LogWarning(ex);
 #endif
                 return OpenResult.Failure;
             }
@@ -77,15 +79,10 @@ namespace Aquiris.SQLite
             catch (Exception ex)
             {
 #if UNITY_EDITOR
-                Debug.LogError(ex);
+                Debug.LogWarning(ex);
 #endif
                 return CloseResult.Failure;
             }
-        }
-
-        internal void PrepareCommand(SqliteCommand command)
-        {
-            command.Connection = _connection;
         }
 
         public static CreateResult Create(string databaseFilePath)
@@ -102,10 +99,25 @@ namespace Aquiris.SQLite
             catch (SqliteException ex)
             {
 #if UNITY_EDITOR
-                Debug.LogError(ex);                
+                Debug.LogWarning(ex);                
 #endif
                 return CreateResult.Failure;
             }
         }
+
+        public static CreateResult Create(string filePath, out SQLiteDatabase database)
+        {
+            CreateResult result = Create(filePath);
+            if (result == CreateResult.Failure)
+            {
+                database = null;
+                return result;
+            }
+
+            database = new SQLiteDatabase(filePath);
+            return result;
+        }
+
+        internal SqliteCommand CreateCommand() => _connection.CreateCommand();
     }
 }
