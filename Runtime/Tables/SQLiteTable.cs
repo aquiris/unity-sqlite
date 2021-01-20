@@ -23,14 +23,14 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void Create(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            string statement = $"CREATE TABLE {name} {CreateColumnsStatement()};";
+            string statement = $"CREATE TABLE {name} {CreateColumnsStatement(_columns)};";
             _runner.Run(new TableQuery(statement), database, onCompleteAction);
         }
 
         [UsedImplicitly]
         public void CreateIfNotExists(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            string statement = $"CREATE TABLE IF NOT EXISTS {name} {CreateColumnsStatement()};";
+            string statement = $"CREATE TABLE IF NOT EXISTS {name} {CreateColumnsStatement(_columns)};";
             _runner.Run(new TableQuery(statement), database, onCompleteAction);
         }
 
@@ -57,8 +57,8 @@ namespace Aquiris.SQLite
             Array.Resize(ref _columns, previousLength + 1);
             _columns[previousLength] = column;
         }
-
-        private string CreateColumnsStatement()
+        
+        private static string CreateColumnsStatement(SQLiteColumn[] columns)
         {
             string statement = "(";
             for (int index = 0; index < columns.Length; index++)
