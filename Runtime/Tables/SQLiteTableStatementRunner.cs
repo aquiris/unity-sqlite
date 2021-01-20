@@ -12,7 +12,7 @@ namespace Aquiris.SQLite.Runtime.Tables
             _callbackAction = callbackAction;
             Run(query, database);
         }
-
+        
         protected override object ExecuteThreaded(SqliteCommand command)
         {
             command.ExecuteNonQuery();
@@ -21,7 +21,7 @@ namespace Aquiris.SQLite.Runtime.Tables
 
         protected override void Completed(QueryResult result)
         {
-            _callbackAction.Invoke(result);
+            _callbackAction?.Invoke(result);
         }
     }
 }

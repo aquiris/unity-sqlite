@@ -11,7 +11,6 @@ namespace Aquiris.SQLite
     internal abstract class SQLiteStatementRunner
     {
         private static readonly object _lock = new object();
-        private static readonly SqliteCommand _command = new SqliteCommand();
         
         private readonly Action _completedAction = default;
 
@@ -42,29 +41,35 @@ namespace Aquiris.SQLite
             {
                 WorkItemInfo info = (WorkItemInfo) state;
 
-                info.database.PrepareCommand(_command);
-                _command.CommandText = info.query.statement;
-                PrepareParameters(_command, info.query);
-                try
+                using (SqliteCommand command = info.database.CreateCommand())
                 {
-                    _result.value = ExecuteThreaded(_command);
-                    _result.success = true;
-                    _result.errorCode = SQLiteErrorCode.Ok;
-                    _result.errorMessage = null;
-                }
-                catch (SqliteException ex)
-                {
+                    command.CommandText = info.query.statement;
+                    PrepareParameters(command, info.query);
+                    try
+                    {
+                        _result.value = ExecuteThreaded(command);
+                        _result.success = true;
+                        _result.errorCode = SQLiteErrorCode.Ok;
+                        _result.errorMessage = null;
+                    }
+                    catch (SqliteException ex)
+                    {
 #if UNITY_EDITOR
-                    Debug.LogError(ex);                
+                        Debug.LogWarning(ex);
 #endif
-                    _result.success = false;
-                    _result.errorCode = ex.ErrorCode;
-                    _result.errorMessage = ex.Message;
-                    _result.value = null;
+                        _result.success = false;
+                        _result.errorCode = ex.ErrorCode;
+                        _result.errorMessage = ex.Message;
+                        _result.value = null;
+                    }
                 }
             }
 
+#if UNITY_INCLUDE_TESTS
+            _completedAction.Invoke();
+#else
             ThreadSafety.RunOnMainThread(_completedAction);
+#endif
         }
 
         private void Completed() => Completed(_result);
@@ -85,6 +90,7 @@ namespace Aquiris.SQLite
             public SQLiteQuery query;
         }
     }
+}
     
     internal struct SQLiteQuery
     {
@@ -110,4 +116,4 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void Add(string column, object value) => Add(new KeyValuePair<string, object>(column, value));
     }
-}
+    

@@ -16,14 +16,7 @@ namespace Aquiris.SQLite.Tables
             this.name = name;
             this.dataType = dataType;
         }
-
-        [UsedImplicitly]
-        public void AddColumn(SQLiteTable table, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
-        {
-            string statement = $"ALTER TABLE {table.name} ADD COLUMN {ToString()};";
-            _runner.Run(new SQLiteQuery(statement), database, onCompleteAction);
-        }
-
+        
         public override string ToString()
         {
             return $"{name} {GetTypeString()}";
@@ -44,3 +37,4 @@ namespace Aquiris.SQLite.Tables
         }
     }
 }
+
