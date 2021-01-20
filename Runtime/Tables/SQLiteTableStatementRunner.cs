@@ -1,6 +1,5 @@
 ﻿using System;
 using Mono.Data.Sqlite;
-using UnityEngine;
 
 namespace Aquiris.SQLite.Runtime.Tables
 {

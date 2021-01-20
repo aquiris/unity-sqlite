@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.IO;
 using Aquiris.SQLite.Threading;
 using JetBrains.Annotations;
 using Mono.Data.Sqlite;
@@ -18,6 +19,13 @@ namespace Aquiris.SQLite
     {
         Close,
         AlreadyClose,
+        Failure
+    }
+
+    public enum CreateResult
+    {
+        Create,
+        AlreadyExists,
         Failure
     }
     
@@ -75,7 +83,29 @@ namespace Aquiris.SQLite
             }
         }
 
-        [UsedImplicitly]
-        internal SqliteCommand CreateCommand() => _connection.CreateCommand();
+        internal void PrepareCommand(SqliteCommand command)
+        {
+            command.Connection = _connection;
+        }
+
+        public static CreateResult Create(string databaseFilePath)
+        {
+            if (File.Exists(databaseFilePath)) return CreateResult.AlreadyExists;
+            string parentDirectory = Directory.GetParent(databaseFilePath).ToString();
+            if (!Directory.Exists(parentDirectory)) Directory.CreateDirectory(parentDirectory);
+            
+            try
+            {
+                SqliteConnection.CreateFile(databaseFilePath);
+                return CreateResult.Create;
+            }
+            catch (SqliteException ex)
+            {
+#if UNITY_EDITOR
+                Debug.LogError(ex);                
+#endif
+                return CreateResult.Failure;
+            }
+        }
     }
 }
