@@ -34,7 +34,7 @@ namespace Aquiris.SQLite
         
         public SQLiteDatabase(string filePath)
         {
-#if UNITY
+#if !UNITY_INCLUDE_TESTS
             ThreadSafety.Initialize();
 #endif
             
@@ -45,7 +45,6 @@ namespace Aquiris.SQLite
             };
             string connectionString = connectionStringBuilder.ToString();
             _connection = new SqliteConnection(connectionString);
-            _connection.StateChange += (sender, args) => Console.WriteLine(args.CurrentState);
         }
 
         [UsedImplicitly]
@@ -61,7 +60,7 @@ namespace Aquiris.SQLite
             catch (Exception ex)
             {
 #if UNITY_EDITOR
-                Debug.LogError(ex);
+                Debug.LogWarning(ex);
 #endif
                 return OpenResult.Failure;
             }
@@ -80,15 +79,10 @@ namespace Aquiris.SQLite
             catch (Exception ex)
             {
 #if UNITY_EDITOR
-                Debug.LogError(ex);
+                Debug.LogWarning(ex);
 #endif
                 return CloseResult.Failure;
             }
-        }
-
-        internal void PrepareCommand(SqliteCommand command)
-        {
-            command.Connection = _connection;
         }
 
         public static CreateResult Create(string databaseFilePath)
@@ -105,7 +99,7 @@ namespace Aquiris.SQLite
             catch (SqliteException ex)
             {
 #if UNITY_EDITOR
-                Debug.LogError(ex);                
+                Debug.LogWarning(ex);                
 #endif
                 return CreateResult.Failure;
             }
@@ -123,5 +117,7 @@ namespace Aquiris.SQLite
             database = new SQLiteDatabase(filePath);
             return result;
         }
+
+        internal SqliteCommand CreateCommand() => _connection.CreateCommand();
     }
 }

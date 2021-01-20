@@ -15,9 +15,9 @@ namespace Aquiris.SQLite.Tests
             
             File.Delete(Constants.databaseFilePath);
 
-            result = SQLiteDatabase.Create(Constants.databaseFilePath, out SQLiteDatabase database);
+            result = SQLiteDatabase.Create(Constants.databaseFilePath, out _database);
             Assert.AreEqual(CreateResult.Create, result);
-            Assert.IsNotNull(database, "Database should not be null here");
+            Assert.IsNotNull(_database, "Database should not be null here");
         }
 
         [Test]
