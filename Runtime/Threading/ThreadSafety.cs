@@ -24,7 +24,8 @@ namespace Aquiris.SQLite.Threading
 
         private void Update()
         {
-            throw new NotImplementedException();
+            if (_concurrentQueue.Count == 0) return;
+            while (_concurrentQueue.TryDequeue(out Action action)) action.Invoke();
         }
     }
 }

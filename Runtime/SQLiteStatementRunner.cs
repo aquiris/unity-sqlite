@@ -2,6 +2,7 @@
 using System.Threading;
 using Aquiris.SQLite.Threading;
 using Mono.Data.Sqlite;
+using UnityEngine;
 
 namespace Aquiris.SQLite
 {
@@ -14,7 +15,9 @@ namespace Aquiris.SQLite
     {
         private readonly Action _completedAction = default;
 
-        public SQLiteStatementRunner()
+        private QueryResult _result = default;
+
+        protected SQLiteStatementRunner()
         {
             _completedAction = Completed;
         }
@@ -29,7 +32,9 @@ namespace Aquiris.SQLite
             ThreadPool.QueueUserWorkItem(ThreadPoolRunner, state);
         }
 
-        protected abstract void Completed();
+        protected abstract object ExecuteThreaded(SqliteCommand command); 
+        
+        protected abstract void Completed(QueryResult _);
 
         private void ThreadPoolRunner(object state)
         {
@@ -37,10 +42,29 @@ namespace Aquiris.SQLite
             
             SqliteCommand command = info.database.CreateCommand();
             command.CommandText = info.query.statement;
-            command.ExecuteNonQuery();
             
+            try
+            {
+                _result.value = ExecuteThreaded(command);
+                _result.success = true;
+                _result.errorCode = SQLiteErrorCode.Ok;
+                _result.errorMessage = null;
+            }
+            catch (SqliteException ex)
+            {
+#if UNITY_EDITOR
+                Debug.LogError(ex);                
+#endif
+                _result.success = false;
+                _result.errorCode = ex.ErrorCode;
+                _result.errorMessage = ex.Message;
+                _result.value = null;
+            }
+
             ThreadSafety.RunOnMainThread(_completedAction);
         }
+
+        private void Completed() => Completed(_result);
 
         private struct WorkItemInfo
         {

@@ -1,20 +1,28 @@
 ﻿using System;
+using Mono.Data.Sqlite;
+using UnityEngine;
 
 namespace Aquiris.SQLite.Runtime.Tables
 {
     internal class SQLiteTableStatementRunner : SQLiteStatementRunner
     {
-        private Action _callbackAction = default;
+        private Action<QueryResult> _callbackAction = default;
         
-        public void Run(ISQLiteQuery query, SQLiteDatabase database, Action callbackAction)
+        public void Run(ISQLiteQuery query, SQLiteDatabase database, Action<QueryResult> callbackAction)
         {
             _callbackAction = callbackAction;
             Run(query, database);
         }
-        
-        protected override void Completed()
+
+        protected override object ExecuteThreaded(SqliteCommand command)
         {
-            _callbackAction.Invoke();
+            command.ExecuteNonQuery();
+            return null;
+        }
+
+        protected override void Completed(QueryResult result)
+        {
+            _callbackAction.Invoke(result);
         }
     }
 }

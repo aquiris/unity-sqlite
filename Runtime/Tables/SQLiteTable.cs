@@ -5,11 +5,11 @@ using JetBrains.Annotations;
 
 namespace Aquiris.SQLite
 {
-    public readonly struct SQLiteTable
+    public struct SQLiteTable
     {
         private static readonly SQLiteTableStatementRunner _runner = new SQLiteTableStatementRunner();
         
-        [UsedImplicitly] public string name { get; }
+        [UsedImplicitly] public string name { get; private set; }
         [UsedImplicitly] public SQLiteColumn[] columns { get; }
         
         public SQLiteTable(string name, SQLiteColumn[] columns)
@@ -19,21 +19,28 @@ namespace Aquiris.SQLite
         }
         
         [UsedImplicitly]
-        public void Create(SQLiteDatabase database, Action onCompleteAction)
+        public void Create(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
             string statement = $"CREATE TABLE {name} {CreateColumnsStatement()};";
             _runner.Run(new TableQuery(statement), database, onCompleteAction);
         }
 
         [UsedImplicitly]
-        public void CreateIfNotExists(SQLiteDatabase database, Action onCompleteAction)
+        public void CreateIfNotExists(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
             string statement = $"CREATE TABLE IF NOT EXISTS {name} {CreateColumnsStatement()};";
             _runner.Run(new TableQuery(statement), database, onCompleteAction);
         }
 
         [UsedImplicitly]
-        public void DropTable(SQLiteDatabase database, Action onCompleteAction)
+        public void RenameTable(string newName, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
+        {
+            string statement = $"ALTER TABLE RENAME {name} {newName};";
+            _runner.Run(new TableQuery(statement), database, onCompleteAction);
+        }
+
+        [UsedImplicitly]
+        public void DropTable(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
             string statement = $"DROP TABLE {name};";
             _runner.Run(new TableQuery(statement), database, onCompleteAction);
@@ -61,10 +68,7 @@ namespace Aquiris.SQLite
         {
             public string statement { get; }
 
-            public TableQuery(string statement)
-            {
-                this.statement = statement;
-            }
+            public TableQuery(string statement) => this.statement = statement;
         }
     }
 }
