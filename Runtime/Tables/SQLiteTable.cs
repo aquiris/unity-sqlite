@@ -33,14 +33,14 @@ namespace Aquiris.SQLite
         }
 
         [UsedImplicitly]
-        public void RenameTable(string newName, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
+        public void Rename(string newName, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            string statement = $"ALTER TABLE RENAME {name} {newName};";
+            string statement = $"ALTER TABLE {name} RENAME TO {newName};";
             _runner.Run(new TableQuery(statement), database, onCompleteAction);
         }
 
         [UsedImplicitly]
-        public void DropTable(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
+        public void Drop(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
             string statement = $"DROP TABLE {name};";
             _runner.Run(new TableQuery(statement), database, onCompleteAction);
@@ -61,6 +61,7 @@ namespace Aquiris.SQLite
 
                 statement += Environment.NewLine;
             }
+            statement += ")";
             return statement;
         }
 
