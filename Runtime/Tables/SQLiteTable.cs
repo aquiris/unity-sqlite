@@ -8,14 +8,16 @@ namespace Aquiris.SQLite
     public struct SQLiteTable
     {
         private static readonly SQLiteTableStatementRunner _runner = new SQLiteTableStatementRunner();
+
+        private SQLiteColumn[] _columns;
         
         [UsedImplicitly] public string name { get; private set; }
-        [UsedImplicitly] public SQLiteColumn[] columns { get; }
+        [UsedImplicitly] public SQLiteColumn[] columns => _columns;
         
         public SQLiteTable(string name, SQLiteColumn[] columns)
         {
             this.name = name;
-            this.columns = columns;
+            _columns = columns;
         }
         
         [UsedImplicitly]
@@ -44,6 +46,16 @@ namespace Aquiris.SQLite
         {
             string statement = $"DROP TABLE {name};";
             _runner.Run(new TableQuery(statement), database, onCompleteAction);
+        }
+        
+        public void AddColumn(SQLiteDatabase database, SQLiteColumn column, Action<QueryResult> onCompleteAction)
+        {
+            string statement = $"ALTER TABLE {name} ADD COLUMN {column};";
+            _runner.Run(new TableQuery(statement), database, onCompleteAction);
+            
+            int previousLength = _columns.Length;
+            Array.Resize(ref _columns, previousLength + 1);
+            _columns[previousLength] = column;
         }
 
         private string CreateColumnsStatement()
