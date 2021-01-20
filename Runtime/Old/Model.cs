@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Collections.Generic;
 
-namespace Aquiris.SQLite.Model {
+namespace Aquiris.SQLite.Old.Model {
 	public abstract class Model {
 		public int Id { get; private set; }
 
