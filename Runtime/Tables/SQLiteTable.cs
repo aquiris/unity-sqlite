@@ -23,36 +23,36 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void Create(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            string statement = $"CREATE TABLE {name} {CreateColumnsStatement(_columns)};";
-            _runner.Run(new SQLiteQuery(statement), database, onCompleteAction);
+            SQLiteQuery query = new SQLiteQuery($"CREATE TABLE {name} {CreateColumnsStatement(_columns)};");
+            _runner.Run(query, database, onCompleteAction);
         }
 
         [UsedImplicitly]
         public void CreateIfNotExists(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            string statement = $"CREATE TABLE IF NOT EXISTS {name} {CreateColumnsStatement(_columns)};";
-            _runner.Run(new SQLiteQuery(statement), database, onCompleteAction);
+            SQLiteQuery query = new SQLiteQuery($"CREATE TABLE IF NOT EXISTS {name} {CreateColumnsStatement(_columns)};");
+            _runner.Run(query, database, onCompleteAction);
         }
 
         [UsedImplicitly]
         public void Rename(string newName, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            string statement = $"ALTER TABLE {name} RENAME TO {newName};";
-            _runner.Run(new SQLiteQuery(statement), database, onCompleteAction);
+            SQLiteQuery query = new SQLiteQuery($"ALTER TABLE {name} RENAME TO {newName};");
+            _runner.Run(query, database, onCompleteAction);
             name = newName;
         }
 
         [UsedImplicitly]
         public void Drop(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            string statement = $"DROP TABLE {name};";
-            _runner.Run(new SQLiteQuery(statement), database, onCompleteAction);
+            SQLiteQuery query = new SQLiteQuery($"DROP TABLE {name};");
+            _runner.Run(query, database, onCompleteAction);
         }
         
         public void AddColumn(SQLiteDatabase database, SQLiteColumn column, Action<QueryResult> onCompleteAction)
         {
-            string statement = $"ALTER TABLE {name} ADD COLUMN {column};";
-            _runner.Run(new SQLiteQuery(statement), database, onCompleteAction);
+            SQLiteQuery query = new SQLiteQuery($"ALTER TABLE {name} ADD COLUMN {column};");
+            _runner.Run(query, database, onCompleteAction);
             
             int previousLength = _columns.Length;
             Array.Resize(ref _columns, previousLength + 1);
@@ -65,7 +65,7 @@ namespace Aquiris.SQLite
             for (int index = 0; index < columns.Length; index++)
             {
                 SQLiteColumn column = columns[index];
-                statement += $"{column.ToString()}";
+                statement += column.ToString();
                 if (index < columns.Length - 1)
                 {
                     statement += $", {Environment.NewLine}";

@@ -95,8 +95,9 @@ namespace Aquiris.SQLite
     internal struct SQLiteQuery
     {
         private static readonly KeyValuePair<string, object>[] _bindingsBuffer = new KeyValuePair<string, object>[100]; // max 
-            
-        public string statement { get; }
+
+        public string statement;
+        
         public int bindingsCount { get; private set; }
         public IReadOnlyList<KeyValuePair<string, object>> bindings => _bindingsBuffer;
 
