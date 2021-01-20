@@ -1,35 +1,31 @@
 ﻿using System.IO;
 using Aquiris.SQLite;
+using Aquiris.SQLite.Tests.Shared;
 using NUnit.Framework;
-using UnityEngine;
 
-namespace Tests
+namespace Aquiris.SQLite.Tests
 {
-    public class DatabaseCreationTests
+    public class DatabaseCreationTests : BaseTestClass
     {
-        private static readonly string path = Path.Combine(Application.dataPath, "SQLite");
-        private static readonly string databaseFilePath = Path.Combine(path, "database.db");
-
-        [SetUp]
-        public void SetUp()
-        {
-            if (!File.Exists(databaseFilePath)) return;
-            File.Delete(databaseFilePath);
-        }
-        
         [Test]
         public void TestCreateDatabaseSuccess()
         {
-            CreateResult result = SQLiteDatabase.Create(databaseFilePath);
+            CreateResult result = SQLiteDatabase.Create(Constants.databaseFilePath);
             Assert.AreEqual(CreateResult.Create, result);
+            
+            File.Delete(Constants.databaseFilePath);
+
+            result = SQLiteDatabase.Create(Constants.databaseFilePath, out SQLiteDatabase database);
+            Assert.AreEqual(CreateResult.Create, result);
+            Assert.IsNotNull(database, "Database should not be null here");
         }
 
         [Test]
         public void TestAlreadyExistingDatabase()
         {
-            CreateResult result = SQLiteDatabase.Create(databaseFilePath);
+            CreateResult result = SQLiteDatabase.Create(Constants.databaseFilePath);
             Assert.AreEqual(CreateResult.Create, result);
-            result = SQLiteDatabase.Create(databaseFilePath);
+            result = SQLiteDatabase.Create(Constants.databaseFilePath);
             Assert.AreEqual(CreateResult.AlreadyExists, result);
         }
     }
