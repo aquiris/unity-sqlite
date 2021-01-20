@@ -37,6 +37,7 @@ namespace Aquiris.SQLite
         {
             string statement = $"ALTER TABLE {name} RENAME TO {newName};";
             _runner.Run(new TableQuery(statement), database, onCompleteAction);
+            name = newName;
         }
 
         [UsedImplicitly]

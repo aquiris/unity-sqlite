@@ -104,6 +104,9 @@ namespace Aquiris.SQLite.Tests
             table.Rename("OtherTable", _database, result =>
             {
                 Assert.IsTrue(result.success);
+                // here we're being positive hoping that the rename has happened
+                // successfully in the query execution
+                Assert.AreEqual("OtherTable", table.name);
                 waiter.Set();
             });
             
