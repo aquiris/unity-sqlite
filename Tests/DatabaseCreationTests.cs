@@ -1,19 +1,11 @@
-﻿using System.IO;
-using Aquiris.SQLite;
-using Aquiris.SQLite.Tests.Constants;
+﻿using Aquiris.SQLite;
+using Aquiris.SQLite.Tests.Shared;
 using NUnit.Framework;
 
 namespace Tests
 {
-    public class DatabaseCreationTests
+    public class DatabaseCreationTests : BaseTestClass
     {
-        [SetUp]
-        public void SetUp()
-        {
-            if (!File.Exists(Constants.databaseFilePath)) return;
-            File.Delete(Constants.databaseFilePath);
-        }
-        
         [Test]
         public void TestCreateDatabaseSuccess()
         {

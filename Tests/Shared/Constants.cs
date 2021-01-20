@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using UnityEngine;
 
-namespace Aquiris.SQLite.Tests.Constants
+namespace Aquiris.SQLite.Tests.Shared
 {
     public static class Constants
     {
