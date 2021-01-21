@@ -1,6 +1,6 @@
 ﻿using Mono.Data.Sqlite;
 
-namespace Aquiris.SQLite
+namespace Aquiris.SQLite.Queries
 {
     public struct QueryResult
     {
