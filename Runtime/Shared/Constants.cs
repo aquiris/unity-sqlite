@@ -26,6 +26,7 @@ namespace Aquiris.SQLite.Shared
             public const string IF = "IF";
             public const string NOT = "NOT";
             public const string TO = "TO";
+            public const string IF_EXISTS = "IF EXISTS";
             public const string IF_NOT_EXISTS = "IF NOT EXISTS";
             public const string AS = "AS";
             public const string WITHOUT = "WITHOUT";
@@ -71,6 +72,8 @@ namespace Aquiris.SQLite.Shared
             public const string NULLS_LAST = "NULLS LAST";
             public const string LIMIT = "LIMIT";
             public const string OFFSET = "OFFSET";
+            public const string CREATE_VIEW = "CREATE VIEW";
+            public const string DROP_VIEW = "DROP VIEW";
 
             #region Operators
 

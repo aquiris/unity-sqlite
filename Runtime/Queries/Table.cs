@@ -26,19 +26,24 @@ namespace Aquiris.SQLite.Queries
             _components = components;
         }
 
-        public Table(EditTableType type)
+        public Table(EditTableType type, bool isView = false)
         {
             _components = new QueryComponents();
             switch (type)
             {
                 case EditTableType.create:
-                    _components.Add(new StringComponent(Constants.QueryComponents.CREATE_TABLE));
+                    StringComponent createTable = new StringComponent(Constants.QueryComponents.CREATE_TABLE);
+                    StringComponent createView = new StringComponent(Constants.QueryComponents.CREATE_VIEW);
+                    _components.Add(isView ? createView : createTable);
                     break;
                 case EditTableType.alter:
+                    if (isView) throw new NotSupportedException("Sqlite error: Cannot alter a view");
                     _components.Add(new StringComponent(Constants.QueryComponents.ALTER_TABLE));
                     break;
                 case EditTableType.drop:
-                    _components.Add(new StringComponent(Constants.QueryComponents.DROP_TABLE));
+                    StringComponent dropTable = new StringComponent(Constants.QueryComponents.DROP_TABLE);
+                    StringComponent dropView = new StringComponent(Constants.QueryComponents.DROP_VIEW);
+                    _components.Add(isView ? dropView : dropTable);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
@@ -49,6 +54,13 @@ namespace Aquiris.SQLite.Queries
         public Table Temporary()
         {
             _components.Add(new StringComponent(Constants.QueryComponents.TEMPORARY));
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Table IfExists()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.IF_EXISTS));
             return this;
         }
 
