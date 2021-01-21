@@ -4,9 +4,9 @@
     {
         public string value { get; }
 
-        public BindingComponent(int index)
+        public BindingComponent(string columnName, int index)
         {
-            value = $"@binding{index}";
+            value = $"@{columnName}{index}";
         }
     }
 }

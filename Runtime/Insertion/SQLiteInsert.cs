@@ -22,14 +22,45 @@ namespace Aquiris.SQLite.Runtime.Insertion
         [UsedImplicitly]
         public void Insert(InsertType type, SQLiteInsertData data, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Columns columns = new Queries.Insert()
-                .IntoTable(_table.name)
-                .Columns();
+            Insert insert = new Insert(type).IntoTable(_table.name);
+            Query query = DoValues(DoColumns(insert, data), data).Build();
+            _runner.Run(query, database, onCompleteAction);
         }
 
         public void Insert(InsertType type, SQLiteInsertData[] collection, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            
+            for (int index = 0; index < collection.Length; index++)
+            {
+                SQLiteInsertData data = collection[index];
+                Insert insert = new Insert(type).IntoTable(_table.name);
+                Query query = DoValues(DoColumns(insert, data), data).Build();
+                _queriesBuffer[index] = query;
+            }
+            _runner.Run(_queriesBuffer, collection.Length, database, onCompleteAction);
+        }
+
+        private static Insert DoColumns(Insert insert, SQLiteInsertData data)
+        {
+            Columns cols = insert.Columns().Begin();
+            for (int index = 0; index < data.dataCount; index++)
+            {
+                KeyValuePair<SQLiteColumn, object> pair = data.data[index];
+                bool addComma = index < data.dataCount - 1;
+                cols = cols.AddColumn(pair.Key.name, addComma);
+            }
+            return cols.End().Insert();
+        }
+
+        private static Insert DoValues(Insert insert, SQLiteInsertData data)
+        {
+            Values values = insert.Values().Begin();
+            for (int index = 0; index < data.dataCount; index++)
+            {
+                KeyValuePair<SQLiteColumn, object> pair = data.data[index];
+                bool addComma = index < data.dataCount - 1;
+                values = values.Add(pair.Key.name, pair.Value, addComma);
+            }
+            return values.End().Insert();
         }
     }
 }

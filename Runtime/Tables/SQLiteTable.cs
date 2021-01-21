@@ -24,21 +24,29 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void Create(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Query query = new Query($"CREATE TABLE {name} {SQLiteColumn.GetCreateTableColumnsStatement(_columns, _columns.Length)};");
+            Table table = Table.Create()
+                .Name(name);
+            Query query = DeclareColumns(table).Build();
             _runner.Run(query, database, onCompleteAction);
         }
 
         [UsedImplicitly]
         public void CreateIfNotExists(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Query query = new Query($"CREATE TABLE IF NOT EXISTS {name} {SQLiteColumn.GetCreateTableColumnsStatement(_columns, _columns.Length)};");
+            Table table = Table.Create()
+                .IfNotExists()
+                .Name(name);
+            Query query = DeclareColumns(table).Build();
             _runner.Run(query, database, onCompleteAction);
         }
 
         [UsedImplicitly]
         public void Rename(string newName, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Query query = new Query($"ALTER TABLE {name} RENAME TO {newName};");
+            Query query = Table.Alter()
+                .Name(name)
+                .RenameTo(newName)
+                .Build();
             _runner.Run(query, database, onCompleteAction);
             name = newName;
         }
@@ -46,18 +54,37 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void Drop(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Query query = new Query($"DROP TABLE {name};");
+            Query query = Table.Drop()
+                .Name(name)
+                .Build();
             _runner.Run(query, database, onCompleteAction);
         }
-        
+
         public void AddColumn(SQLiteDatabase database, SQLiteColumn column, Action<QueryResult> onCompleteAction)
         {
-            Query query = new Query($"ALTER TABLE {name} ADD COLUMN {column.GetTableDeclaration()};");
+            Query query = Table.Alter()
+                .Name(name)
+                .AddColumn()
+                .DeclareColumn(column.name, column.dataType, false)
+                .Table()
+                .Build();
             _runner.Run(query, database, onCompleteAction);
             
             int previousLength = _columns.Length;
             Array.Resize(ref _columns, previousLength + 1);
             _columns[previousLength] = column;
+        }
+
+        private Table DeclareColumns(Table table)
+        {
+            Columns cols = table.Columns().Begin();
+            for (int index = 0; index < _columns.Length; index++)
+            {
+                SQLiteColumn column = _columns[index];
+                bool addComma = index < _columns.Length - 1;
+                cols = cols.DeclareColumn(column.name, column.dataType, addComma);
+            }
+            return cols.End().Table();
         }
     }
 }

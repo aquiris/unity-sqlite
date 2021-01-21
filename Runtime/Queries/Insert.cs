@@ -75,5 +75,8 @@ namespace Aquiris.SQLite.Queries
             _components.Add(new StringComponent(Constants.QueryComponents.DEFAULT_VALUES));
             return this;
         }
+
+        [UsedImplicitly]
+        public Query Build() => _components.Build();
     }
 }

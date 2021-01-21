@@ -14,7 +14,6 @@ namespace Aquiris.SQLite.Queries
         {
             _components = components;
             _columnCount = 0;
-            _components.Add(new StringComponent(Constants.QueryComponents.PARENTHESIS_OPEN));
         }
 
         internal Values(Values other)
@@ -24,19 +23,34 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
-        public Values Add(object value)
+        public Values Begin()
         {
-            BindingComponent binding = new BindingComponent(_columnCount);
-            _components.AddBinding(binding.value, value);
+            _components.Add(new StringComponent(Constants.QueryComponents.VALUES));
+            _components.Add(new StringComponent(Constants.QueryComponents.PARENTHESIS_OPEN));
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Values End()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.PARENTHESIS_CLOSE));
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Values Add(string columnName, object value, bool addComma)
+        {
+            BindingComponent binding = new BindingComponent(columnName, _columnCount);
             _components.Add(binding);
+            _components.AddBinding(binding.value, value);
+            if (addComma) _components.Add(new StringComponent(Constants.QueryComponents.COMMA));
             _columnCount += 1;
             return this;
         }
 
         [UsedImplicitly]
-        public Insert BackToInsert()
+        public Insert Insert()
         {
-            _components.Add(new StringComponent(Constants.QueryComponents.PARENTHESIS_CLOSE));
             return new Insert(_components);
         }
     }

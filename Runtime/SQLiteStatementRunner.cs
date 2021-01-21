@@ -96,7 +96,7 @@ namespace Aquiris.SQLite
             catch (SqliteException ex)
             {
 #if UNITY_EDITOR
-                Debug.LogWarning(ex);
+                Debug.LogWarning($"Query: {query.statement}{Constants.newLine}{ex}");
 #endif
                 _result.success = false;
                 _result.errorCode = ex.ErrorCode;

@@ -9,7 +9,6 @@ namespace Aquiris.SQLite.Shared
 
         public const int maxNumberOfBindings = 100;
         public const int maxNumberOfQueryComponents = 1024;
-        public const int maxNumberOfColumns = 100;
         public const int maxNumberOfQueries = 1024 * 1024;
 
         internal static class QueryComponents
@@ -19,11 +18,12 @@ namespace Aquiris.SQLite.Shared
             public const string SEMICOLON = ";";
             public const string PARENTHESIS_OPEN = "(";
             public const string PARENTHESIS_CLOSE = ")";
-            public const string CREATE = "CREATE";
+            public const string CREATE_TABLE = "CREATE TABLE";
             public const string TEMPORARY = "TEMPORARY";
             public const string TABLE = "TABLE";
             public const string IF = "IF";
             public const string NOT = "NOT";
+            public const string TO = "TO";
             public const string EXISTS = "EXISTS";
             public const string IF_NOT_EXISTS = "IF NOT EXISTS";
             public const string AS = "AS";
@@ -47,6 +47,11 @@ namespace Aquiris.SQLite.Shared
             public const string VALUES = "VALUES";
             public const string DEFAULT = "DEFAULT";
             public const string DEFAULT_VALUES = "DEFAULT VALUES";
+            public const string ALTER_TABLE = "ALTER TABLE";
+            public const string RENAME_TO = "RENAME TO";
+            public const string DROP_TABLE = "DROP TABLE";
+            public const string ADD_COLUMN = "ADD COLUMN";
+            public const string RENAME_COLUMN = "RENAME COLUMN";
         }
     }
 }
