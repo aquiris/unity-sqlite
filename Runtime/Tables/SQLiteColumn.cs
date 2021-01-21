@@ -1,5 +1,7 @@
 ﻿using System;
+using Aquiris.SQLite.Queries;
 using Aquiris.SQLite.Runtime.Tables;
+using Aquiris.SQLite.Shared;
 
 namespace Aquiris.SQLite.Tables
 {
@@ -44,6 +46,27 @@ namespace Aquiris.SQLite.Tables
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null);
             }
+        }
+        
+        internal static string GetCreateTableColumnsStatement(SQLiteColumn[] columns, int count)
+        {
+            string newLine = Constants.newLine;
+            string commaNewLine = Constants.commaNewLine;
+            
+            string statement = "(";
+            for (int index = 0; index < count; index++)
+            {
+                SQLiteColumn column = columns[index];
+                statement += column.GetTableDeclaration();
+                if (index < count - 1)
+                {
+                    statement += commaNewLine;
+                    continue;
+                }
+                statement += newLine;
+            }
+            statement += ")";
+            return statement;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Aquiris.SQLite.Queries;
 using Aquiris.SQLite.Runtime.Tables;
 using Aquiris.SQLite.Shared;
 using Aquiris.SQLite.Tables;
@@ -24,14 +25,14 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void Create(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            SQLiteQuery query = new SQLiteQuery($"CREATE TABLE {name} {CreateColumnsStatement(_columns)};");
+            SQLiteQuery query = new SQLiteQuery($"CREATE TABLE {name} {SQLiteColumn.GetCreateTableColumnsStatement(_columns)};");
             _runner.Run(query, database, onCompleteAction);
         }
 
         [UsedImplicitly]
         public void CreateIfNotExists(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            SQLiteQuery query = new SQLiteQuery($"CREATE TABLE IF NOT EXISTS {name} {CreateColumnsStatement(_columns)};");
+            SQLiteQuery query = new SQLiteQuery($"CREATE TABLE IF NOT EXISTS {name} {SQLiteColumn.GetCreateTableColumnsStatement(_columns)};");
             _runner.Run(query, database, onCompleteAction);
         }
 
@@ -58,27 +59,6 @@ namespace Aquiris.SQLite
             int previousLength = _columns.Length;
             Array.Resize(ref _columns, previousLength + 1);
             _columns[previousLength] = column;
-        }
-        
-        private static string CreateColumnsStatement(SQLiteColumn[] columns)
-        {
-            string newLine = Constants.newLine;
-            string commaNewLine = Constants.commaNewLine;
-            
-            string statement = "(";
-            for (int index = 0; index < columns.Length; index++)
-            {
-                SQLiteColumn column = columns[index];
-                statement += column.GetTableDeclaration();
-                if (index < columns.Length - 1)
-                {
-                    statement += commaNewLine;
-                    continue;
-                }
-                statement += newLine;
-            }
-            statement += ")";
-            return statement;
         }
     }
 }

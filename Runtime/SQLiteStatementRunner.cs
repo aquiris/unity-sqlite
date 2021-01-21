@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Aquiris.SQLite.Queries;
 using Aquiris.SQLite.Shared;
 using JetBrains.Annotations;
 using Mono.Data.Sqlite;
@@ -123,30 +124,4 @@ namespace Aquiris.SQLite
         }
     }
 }
-    
-    internal struct SQLiteQuery
-    {
-        private static readonly KeyValuePair<string, object>[] _bindingsBuffer = new KeyValuePair<string, object>[Constants.maxNumberOfBindings]; 
-
-        public string statement;
-        
-        public int bindingsCount { get; private set; }
-        public IReadOnlyList<KeyValuePair<string, object>> bindings => _bindingsBuffer;
-
-        public SQLiteQuery(string statement)
-        {
-            this.statement = statement;
-            bindingsCount = 0;
-        }
-
-        [UsedImplicitly]
-        public void Add(KeyValuePair<string, object> binding)
-        {
-            _bindingsBuffer[bindingsCount] = binding;
-            bindingsCount += 1;
-        }
-
-        [UsedImplicitly]
-        public void Add(string column, object value) => Add(new KeyValuePair<string, object>(column, value));
-    }
     
