@@ -6,20 +6,31 @@ namespace Aquiris.SQLite.Runtime.Insertion
     internal class SQLiteInsertStatementRunner : SQLiteStatementRunner
     {
         private Action<QueryResult> _callbackAction = default;
+        private int _insertCount = default;
 
         public void Run(SQLiteQuery query, SQLiteDatabase database, Action<QueryResult> callbackAction)
         {
+            _insertCount = 0;
             _callbackAction = callbackAction;
             Run(query, database);
+        }
+
+        public void Run(SQLiteQuery[] queries, int count, SQLiteDatabase database, Action<QueryResult> callbackAction)
+        {
+            _insertCount = 0;
+            _callbackAction = callbackAction;
+            Run(queries, count, database);
         }
         
         protected override object ExecuteThreaded(SqliteCommand command)
         {
-            return command.ExecuteNonQuery();
+            _insertCount += command.ExecuteNonQuery();
+            return null;
         }
 
         protected override void Completed(QueryResult result)
         {
+            result.value = _insertCount;
             _callbackAction.Invoke(result);
         }
     }
