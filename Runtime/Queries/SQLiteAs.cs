@@ -6,24 +6,23 @@ namespace Aquiris.SQLite.Queries
     public struct SQLiteAs : IQueryComponent
     {
         private SQLiteSelect _select;
-        
-        public KeyValuePair<string, object>[] bindings { get; }
-        public int bindingCount { get; }
+
+        public KeyValuePair<string, object>[] bindings => _select.bindings;
+        public int bindingCount => _select.bindingCount;
         
         internal SQLiteAs(SQLiteSelect select) : this()
         {
             _select = select;
         }
 
-        public SQLiteQuery Finish()
-        {
-            throw new NotImplementedException();
-        }
-
         public string Build()
         {
-            // TODO(anderson): make this happen
-            return "";
+            return $"AS {_select.Build()}";
+        }
+
+        SQLiteQuery IQueryComponent.Finish()
+        {
+            throw new NotImplementedException();
         }
     }
 }
