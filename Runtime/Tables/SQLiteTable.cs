@@ -24,7 +24,7 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void Create(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Table table = Table.Create()
+            Table table = new Table(EditTableType.create)
                 .Name(name);
             Query query = DeclareColumns(table).Build();
             _runner.Run(query, database, onCompleteAction);
@@ -33,7 +33,7 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void CreateIfNotExists(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Table table = Table.Create()
+            Table table = new Table(EditTableType.create)
                 .IfNotExists()
                 .Name(name);
             Query query = DeclareColumns(table).Build();
@@ -43,7 +43,7 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void Rename(string newName, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Query query = Table.Alter()
+            Query query = new Table(EditTableType.alter)
                 .Name(name)
                 .RenameTo(newName)
                 .Build();
@@ -54,7 +54,7 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void Drop(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Query query = Table.Drop()
+            Query query = new Table(EditTableType.drop)
                 .Name(name)
                 .Build();
             _runner.Run(query, database, onCompleteAction);
@@ -62,7 +62,7 @@ namespace Aquiris.SQLite
 
         public void AddColumn(SQLiteDatabase database, SQLiteColumn column, Action<QueryResult> onCompleteAction)
         {
-            Query query = Table.Alter()
+            Query query = new Table(EditTableType.alter)
                 .Name(name)
                 .AddColumn()
                 .DeclareColumn(column.name, column.dataType, false)
@@ -73,6 +73,12 @@ namespace Aquiris.SQLite
             int previousLength = _columns.Length;
             Array.Resize(ref _columns, previousLength + 1);
             _columns[previousLength] = column;
+        }
+
+        [UsedImplicitly]
+        public static void Run(Query query, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
+        {
+            _runner.Run(query, database, onCompleteAction);
         }
 
         private Table DeclareColumns(Table table)

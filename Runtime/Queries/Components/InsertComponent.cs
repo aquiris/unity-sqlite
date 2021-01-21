@@ -1,6 +1,5 @@
 ﻿using System;
 using Aquiris.SQLite.Shared;
-using static Aquiris.SQLite.Shared.Constants;
 
 namespace Aquiris.SQLite.Queries.Components
 {
