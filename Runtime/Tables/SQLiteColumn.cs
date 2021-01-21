@@ -1,5 +1,7 @@
 ﻿using System;
+using Aquiris.SQLite.Queries;
 using Aquiris.SQLite.Runtime.Tables;
+using Aquiris.SQLite.Shared;
 
 namespace Aquiris.SQLite.Tables
 {
@@ -8,42 +10,19 @@ namespace Aquiris.SQLite.Tables
         private static readonly SQLiteColumnStatementRunner _runner = new SQLiteColumnStatementRunner();
         
         public string name { get; private set; }
-        public SQLiteDataType dataType { get; }
-        
-        internal string bindingName { get; private set; }
+        public DataType dataType { get; }
 
-        public SQLiteColumn(string name, SQLiteDataType dataType)
+        public SQLiteColumn(string name, DataType dataType)
         {
             this.name = name;
             this.dataType = dataType;
-            bindingName = $"@{name}";
         }
 
         public void Rename(string newName, SQLiteTable table, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            SQLiteQuery query = new SQLiteQuery($"ALTER TABLE {table.name} RENAME COLUMN {name} TO {newName}");
+            Query query = Table.Alter().Name(table.name).Columns().Rename(name, newName).Table().Build();
             _runner.Run(query, database, onCompleteAction);
             name = newName;
-            bindingName = $"@{name}";
-        }
-
-        internal string GetTableDeclaration()
-        {
-            return $"{name} {GetTypeString()}";
-        }
-
-        private string GetTypeString()
-        {
-            switch (dataType)
-            {
-                case SQLiteDataType.Blob: return "BLOB";
-                case SQLiteDataType.Integer: return "INTEGER";
-                case SQLiteDataType.Numeric: return "NUMERIC";
-                case SQLiteDataType.Real: return "REAL";
-                case SQLiteDataType.Text: return "TEXT";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null);
-            }
         }
     }
 }

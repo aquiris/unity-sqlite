@@ -1,4 +1,5 @@
 ﻿using System;
+using Aquiris.SQLite.Queries;
 using Mono.Data.Sqlite;
 
 namespace Aquiris.SQLite.Runtime.Insertion
@@ -8,14 +9,14 @@ namespace Aquiris.SQLite.Runtime.Insertion
         private Action<QueryResult> _callbackAction = default;
         private int _insertCount = default;
 
-        public void Run(SQLiteQuery query, SQLiteDatabase database, Action<QueryResult> callbackAction)
+        public void Run(Query query, SQLiteDatabase database, Action<QueryResult> callbackAction)
         {
             _insertCount = 0;
             _callbackAction = callbackAction;
             Run(query, database);
         }
 
-        public void Run(SQLiteQuery[] queries, int count, SQLiteDatabase database, Action<QueryResult> callbackAction)
+        public void Run(Query[] queries, int count, SQLiteDatabase database, Action<QueryResult> callbackAction)
         {
             _insertCount = 0;
             _callbackAction = callbackAction;

@@ -1,4 +1,5 @@
 ﻿using System;
+using Aquiris.SQLite.Shared;
 using Aquiris.SQLite.Tables;
 using Aquiris.SQLite.Tests.Shared;
 using Mono.Data.Sqlite;
@@ -175,7 +176,7 @@ namespace Aquiris.SQLite.Tests
             
             WaitOne();
 
-            SQLiteColumn column = new SQLiteColumn("Column4", SQLiteDataType.Text);
+            SQLiteColumn column = new SQLiteColumn("Column4", DataType.Text);
             table.AddColumn(_database, column, result =>
             {
                 Assert.IsTrue(result.success);
@@ -219,9 +220,9 @@ namespace Aquiris.SQLite.Tests
         private static SQLiteTable GetTable()
         {
             SQLiteColumn[] columns = {
-                new SQLiteColumn("Column1", SQLiteDataType.Integer),
-                new SQLiteColumn("Column2", SQLiteDataType.Real),
-                new SQLiteColumn("Column3", SQLiteDataType.Text),
+                new SQLiteColumn("Column1", DataType.Integer),
+                new SQLiteColumn("Column2", DataType.Real),
+                new SQLiteColumn("Column3", DataType.Text),
             };
             return new SQLiteTable("TestTable", columns);
         }

@@ -1,27 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using Aquiris.SQLite.Queries;
 using Aquiris.SQLite.Shared;
 using Aquiris.SQLite.Tables;
 using JetBrains.Annotations;
 
 namespace Aquiris.SQLite.Runtime.Insertion
 {
-    public enum SQLiteInsertType
-    {
-        insert,
-        insertOrAbort,
-        insertOrFail,
-        insertOrIgnore,
-        insertOrReplace,
-        insertOrRollback,
-        replace,
-    }
-    
     public readonly struct SQLiteInsert
     {
-        private static readonly SQLiteQuery[] _queriesBuffer = new SQLiteQuery[Constants.maxNumberOfQueries];
+        private static readonly Query[] _queriesBuffer = new Query[Constants.maxNumberOfQueries];
         private static readonly SQLiteInsertStatementRunner _runner = new SQLiteInsertStatementRunner();
-        
+
         private readonly SQLiteTable _table;
 
         public SQLiteInsert(SQLiteTable table)
@@ -30,84 +20,47 @@ namespace Aquiris.SQLite.Runtime.Insertion
         }
 
         [UsedImplicitly]
-        public void Insert(SQLiteInsertType type, SQLiteInsertData data, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
+        public void Insert(InsertType type, SQLiteInsertData data, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            string typeString = GetInsertType(type);
-            RunInsert(typeString, data, database, onCompleteAction);
-        }
-
-        public void Insert(SQLiteInsertType type, SQLiteInsertData[] collection, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
-        {
-            string typeString = GetInsertType(type);
-            RunInsert(typeString, collection, database, onCompleteAction);
-        }
-
-        private void RunInsert(string insertType, SQLiteInsertData data, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
-        {
-            SQLiteQuery query = CreateQuery(insertType, data);
+            Insert insert = new Insert(type).IntoTable(_table.name);
+            Query query = DoValues(DoColumns(insert, data), data).Build();
             _runner.Run(query, database, onCompleteAction);
         }
 
-        private void RunInsert(string insertType, SQLiteInsertData[] collection, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
+        public void Insert(InsertType type, SQLiteInsertData[] collection, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            int queriesLength = collection.Length;
-            for (int index = 0; index < queriesLength; index++)
+            for (int index = 0; index < collection.Length; index++)
             {
-                _queriesBuffer[index] = CreateQuery(insertType, collection[index]);
+                SQLiteInsertData data = collection[index];
+                Insert insert = new Insert(type).IntoTable(_table.name);
+                Query query = DoValues(DoColumns(insert, data), data).Build();
+                _queriesBuffer[index] = query;
             }
-            _runner.Run(_queriesBuffer, queriesLength, database, onCompleteAction);
+            _runner.Run(_queriesBuffer, collection.Length, database, onCompleteAction);
         }
 
-        private SQLiteQuery CreateQuery(string insertType, SQLiteInsertData data)
+        private static Insert DoColumns(Insert insert, SQLiteInsertData data)
         {
-            SQLiteQuery query = new SQLiteQuery();
-            CreateInsertDataStatement(data, ref query, out string columns, out string values);
-            query.statement = $"{insertType} {_table.name} {columns} VALUES {values};";
-            return query;
+            Columns cols = insert.Columns().Begin();
+            for (int index = 0; index < data.dataCount; index++)
+            {
+                KeyValuePair<SQLiteColumn, object> pair = data.data[index];
+                bool addComma = index < data.dataCount - 1;
+                cols = cols.AddColumn(pair.Key.name, addComma);
+            }
+            return cols.End().Insert();
         }
 
-        private static void CreateInsertDataStatement(SQLiteInsertData insertData, ref SQLiteQuery query, out string columns, out string values)
+        private static Insert DoValues(Insert insert, SQLiteInsertData data)
         {
-            string newLine = Constants.newLine;
-            string commaNewLine = Constants.commaNewLine;
-            columns = "(";
-            values = "(";
-            IReadOnlyList<KeyValuePair<SQLiteColumn, object>> data = insertData.data;
-            for (int index = 0; index < insertData.dataCount; index++)
+            Values values = insert.Values().Begin();
+            for (int index = 0; index < data.dataCount; index++)
             {
-                KeyValuePair<SQLiteColumn, object> column = data[index];
-                string columnName = column.Key.name;
-                string bindingName = column.Key.bindingName;
-                query.Add(bindingName, column.Value);
-                columns += columnName;
-                values += bindingName;
-                if (index < insertData.dataCount - 1)
-                {
-                    columns += commaNewLine;
-                    values += commaNewLine;
-                    continue;
-                }
-                
-                columns += newLine;
-                values += newLine;
+                KeyValuePair<SQLiteColumn, object> pair = data.data[index];
+                bool addComma = index < data.dataCount - 1;
+                values = values.Add(pair.Key.name, pair.Value, addComma);
             }
-            columns += ")";
-            values += ")";
-        }
-
-        private static string GetInsertType(SQLiteInsertType type)
-        {
-            switch (type)
-            {
-                case SQLiteInsertType.insert: return "INSERT INTO";
-                case SQLiteInsertType.insertOrAbort: return "INSERT OR ABORT INTO";
-                case SQLiteInsertType.insertOrFail: return "INSERT OR FAIL INTO";
-                case SQLiteInsertType.insertOrIgnore: return "INSERT OR IGNORE INTO";
-                case SQLiteInsertType.insertOrReplace: return "INSERT OR REPLACE INTO";
-                case SQLiteInsertType.insertOrRollback: return "INSERT OR ROLLBACK INTO";
-                case SQLiteInsertType.replace: return "REPLACE INTO";
-                default: throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
+            return values.End().Insert();
         }
     }
 }

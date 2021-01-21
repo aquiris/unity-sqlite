@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Aquiris.SQLite.Queries;
 using Aquiris.SQLite.Shared;
 using JetBrains.Annotations;
 using Mono.Data.Sqlite;
@@ -21,7 +22,7 @@ namespace Aquiris.SQLite
             _completedAction = Completed;
         }
         
-        protected void Run(SQLiteQuery query, SQLiteDatabase database)
+        protected void Run(Query query, SQLiteDatabase database)
         {
             WorkItemInfo state = new WorkItemInfo
             {
@@ -32,7 +33,7 @@ namespace Aquiris.SQLite
             ThreadPool.QueueUserWorkItem(ThreadPoolRunner, state);
         }
 
-        protected void Run(SQLiteQuery[] queries, int count, SQLiteDatabase database)
+        protected void Run(Query[] queries, int count, SQLiteDatabase database)
         {
             WorkItemInfo state = new WorkItemInfo
             {
@@ -80,7 +81,7 @@ namespace Aquiris.SQLite
 
         private void Completed() => Completed(_result);
 
-        private void ExecuteOne(SqliteCommand command, SqliteTransaction transaction, SQLiteQuery query)
+        private void ExecuteOne(SqliteCommand command, SqliteTransaction transaction, Query query)
         {
             command.Transaction = transaction;
             command.CommandText = query.statement;
@@ -95,7 +96,7 @@ namespace Aquiris.SQLite
             catch (SqliteException ex)
             {
 #if UNITY_EDITOR
-                Debug.LogWarning(ex);
+                Debug.LogWarning($"Query: {query.statement}{Constants.newLine}{ex}");
 #endif
                 _result.success = false;
                 _result.errorCode = ex.ErrorCode;
@@ -104,7 +105,7 @@ namespace Aquiris.SQLite
             }
         }
 
-        private static void PrepareParameters(SqliteCommand command, SQLiteQuery query)
+        private static void PrepareParameters(SqliteCommand command, Query query)
         {
             for (int index = 0; index < query.bindingsCount; index++)
             {
@@ -117,36 +118,10 @@ namespace Aquiris.SQLite
         private struct WorkItemInfo
         {
             public SQLiteDatabase database;
-            public SQLiteQuery query;
-            public SQLiteQuery[] queries;
+            public Query query;
+            public Query[] queries;
             public int queriesCount;
         }
     }
 }
-    
-    internal struct SQLiteQuery
-    {
-        private static readonly KeyValuePair<string, object>[] _bindingsBuffer = new KeyValuePair<string, object>[Constants.maxNumberOfBindings]; 
-
-        public string statement;
-        
-        public int bindingsCount { get; private set; }
-        public IReadOnlyList<KeyValuePair<string, object>> bindings => _bindingsBuffer;
-
-        public SQLiteQuery(string statement)
-        {
-            this.statement = statement;
-            bindingsCount = 0;
-        }
-
-        [UsedImplicitly]
-        public void Add(KeyValuePair<string, object> binding)
-        {
-            _bindingsBuffer[bindingsCount] = binding;
-            bindingsCount += 1;
-        }
-
-        [UsedImplicitly]
-        public void Add(string column, object value) => Add(new KeyValuePair<string, object>(column, value));
-    }
     
