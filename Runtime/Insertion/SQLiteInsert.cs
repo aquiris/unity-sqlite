@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using Aquiris.SQLite.Shared;
 using Aquiris.SQLite.Tables;
 using JetBrains.Annotations;
@@ -10,7 +8,7 @@ namespace Aquiris.SQLite.Runtime.Insertion
 {
     public readonly struct SQLiteInsert
     {
-        private static readonly SQLiteQuery[] _queriesBuffer = new SQLiteQuery[1024 * 1024];
+        private static readonly SQLiteQuery[] _queriesBuffer = new SQLiteQuery[Constants.maxNumberOfQueries];
         private static readonly SQLiteInsertStatementRunner _runner = new SQLiteInsertStatementRunner();
         
         private readonly SQLiteTable _table;

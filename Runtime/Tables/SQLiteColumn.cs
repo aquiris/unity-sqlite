@@ -1,6 +1,5 @@
 ﻿using System;
 using Aquiris.SQLite.Runtime.Tables;
-using JetBrains.Annotations;
 
 namespace Aquiris.SQLite.Tables
 {

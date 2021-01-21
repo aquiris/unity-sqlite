@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Aquiris.SQLite.Runtime.Insertion;
+﻿using Aquiris.SQLite.Runtime.Insertion;
 using Aquiris.SQLite.Tables;
 using Aquiris.SQLite.Tests.Shared;
 using NUnit.Framework;
@@ -15,7 +14,7 @@ namespace Aquiris.SQLite.Tests
         [Test]
         public void TestInsertingData()
         {
-            AutoResetEvent waiter = new AutoResetEvent(false);
+            CreateWaiter();
             
             CreateDatabase();
             _database.Open();
@@ -24,25 +23,64 @@ namespace Aquiris.SQLite.Tests
             table.Create(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                waiter.Set();
+                _waiter.Set();
             });
             
-            Assert.IsTrue(waiter.WaitOne(1000));
+            WaitOne();
 
             SQLiteInsert insert = new SQLiteInsert(table);
+            
             SQLiteInsertData data = new SQLiteInsertData(table);
             data.Add(_intColumn, 255);
             data.Add(_floatColumn, 3.14F);
             data.Add(_stringColumn, "This is a string");
-            
             insert.Insert(data, _database, result =>
             {
                 Assert.IsTrue(result.success);
                 Assert.AreEqual(1, result.value); // number of added rows
-                waiter.Set();
+                _waiter.Set();
             });
             
-            Assert.IsTrue(waiter.WaitOne(1000));
+            WaitOne();
+        }
+
+        [Test]
+        public void TestInsertingBatchData()
+        {
+            CreateWaiter();
+            
+            CreateDatabase();
+            _database.Open();
+
+            SQLiteTable table = GetTable();
+            table.Create(_database, result =>
+            {
+                Assert.IsTrue(result.success);
+                _waiter.Set();
+            });
+            
+            WaitOne();
+
+            SQLiteInsert insert = new SQLiteInsert(table);
+
+            SQLiteInsertData[] collection = new SQLiteInsertData[3];
+            for (int index = 0; index < collection.Length; index++)
+            {
+                SQLiteInsertData data = new SQLiteInsertData(table);
+                data.Add(_intColumn, 255 * index);
+                data.Add(_floatColumn, 3.14F * index);
+                data.Add(_stringColumn, $"Value of {index}");
+                collection[index] = data;
+            }
+            
+            insert.Insert(collection, _database, result =>
+            {
+                Assert.IsTrue(result.success);
+                Assert.AreEqual(3, result.value);
+                _waiter.Set();
+            });
+            
+            WaitOne();
         }
 
         private static SQLiteTable GetTable()
