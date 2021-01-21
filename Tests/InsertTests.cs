@@ -63,7 +63,7 @@ namespace Aquiris.SQLite.Tests
 
             SQLiteInsert insert = new SQLiteInsert(table);
 
-            int itemCount = 10000;
+            const int itemCount = 10000;
             SQLiteInsertData[] collection = new SQLiteInsertData[itemCount];
             for (int index = 0; index < collection.Length; index++)
             {
