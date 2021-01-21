@@ -24,21 +24,21 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void Create(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            SQLiteQuery query = new SQLiteQuery($"CREATE TABLE {name} {SQLiteColumn.GetCreateTableColumnsStatement(_columns, _columns.Length)};");
+            Query query = new Query($"CREATE TABLE {name} {SQLiteColumn.GetCreateTableColumnsStatement(_columns, _columns.Length)};");
             _runner.Run(query, database, onCompleteAction);
         }
 
         [UsedImplicitly]
         public void CreateIfNotExists(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            SQLiteQuery query = new SQLiteQuery($"CREATE TABLE IF NOT EXISTS {name} {SQLiteColumn.GetCreateTableColumnsStatement(_columns, _columns.Length)};");
+            Query query = new Query($"CREATE TABLE IF NOT EXISTS {name} {SQLiteColumn.GetCreateTableColumnsStatement(_columns, _columns.Length)};");
             _runner.Run(query, database, onCompleteAction);
         }
 
         [UsedImplicitly]
         public void Rename(string newName, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            SQLiteQuery query = new SQLiteQuery($"ALTER TABLE {name} RENAME TO {newName};");
+            Query query = new Query($"ALTER TABLE {name} RENAME TO {newName};");
             _runner.Run(query, database, onCompleteAction);
             name = newName;
         }
@@ -46,13 +46,13 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void Drop(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            SQLiteQuery query = new SQLiteQuery($"DROP TABLE {name};");
+            Query query = new Query($"DROP TABLE {name};");
             _runner.Run(query, database, onCompleteAction);
         }
         
         public void AddColumn(SQLiteDatabase database, SQLiteColumn column, Action<QueryResult> onCompleteAction)
         {
-            SQLiteQuery query = new SQLiteQuery($"ALTER TABLE {name} ADD COLUMN {column.GetTableDeclaration()};");
+            Query query = new Query($"ALTER TABLE {name} ADD COLUMN {column.GetTableDeclaration()};");
             _runner.Run(query, database, onCompleteAction);
             
             int previousLength = _columns.Length;

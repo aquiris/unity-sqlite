@@ -10,11 +10,11 @@ namespace Aquiris.SQLite.Tables
         private static readonly SQLiteColumnStatementRunner _runner = new SQLiteColumnStatementRunner();
         
         public string name { get; private set; }
-        public SQLiteDataType dataType { get; }
+        public DataType dataType { get; }
         
         internal string bindingName { get; private set; }
 
-        public SQLiteColumn(string name, SQLiteDataType dataType)
+        public SQLiteColumn(string name, DataType dataType)
         {
             this.name = name;
             this.dataType = dataType;
@@ -23,7 +23,7 @@ namespace Aquiris.SQLite.Tables
 
         public void Rename(string newName, SQLiteTable table, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            SQLiteQuery query = new SQLiteQuery($"ALTER TABLE {table.name} RENAME COLUMN {name} TO {newName}");
+            Query query = new Query($"ALTER TABLE {table.name} RENAME COLUMN {name} TO {newName}");
             _runner.Run(query, database, onCompleteAction);
             name = newName;
             bindingName = $"@{name}";

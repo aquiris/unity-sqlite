@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace Aquiris.SQLite.Queries
 {
-    public struct SQLiteQuery
+    public struct Query
     {
         private static readonly KeyValuePair<string, object>[] _bindingsBuffer = new KeyValuePair<string, object>[Constants.maxNumberOfBindings]; 
 
@@ -13,7 +13,7 @@ namespace Aquiris.SQLite.Queries
         public int bindingsCount { get; private set; }
         public IReadOnlyList<KeyValuePair<string, object>> bindings => _bindingsBuffer;
 
-        public SQLiteQuery(string statement)
+        public Query(string statement)
         {
             this.statement = statement;
             bindingsCount = 0;

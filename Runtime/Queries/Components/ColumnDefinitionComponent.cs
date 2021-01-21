@@ -11,7 +11,7 @@ namespace Aquiris.SQLite.Queries.Components
             value = name;
         }
 
-        public ColumnDefinitionComponent(string name, SQLiteDataType type)
+        public ColumnDefinitionComponent(string name, DataType type)
         {
             value = $"{name} {type.Convert()}";
         }

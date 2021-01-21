@@ -22,7 +22,7 @@ namespace Aquiris.SQLite
             _completedAction = Completed;
         }
         
-        protected void Run(SQLiteQuery query, SQLiteDatabase database)
+        protected void Run(Query query, SQLiteDatabase database)
         {
             WorkItemInfo state = new WorkItemInfo
             {
@@ -33,7 +33,7 @@ namespace Aquiris.SQLite
             ThreadPool.QueueUserWorkItem(ThreadPoolRunner, state);
         }
 
-        protected void Run(SQLiteQuery[] queries, int count, SQLiteDatabase database)
+        protected void Run(Query[] queries, int count, SQLiteDatabase database)
         {
             WorkItemInfo state = new WorkItemInfo
             {
@@ -81,7 +81,7 @@ namespace Aquiris.SQLite
 
         private void Completed() => Completed(_result);
 
-        private void ExecuteOne(SqliteCommand command, SqliteTransaction transaction, SQLiteQuery query)
+        private void ExecuteOne(SqliteCommand command, SqliteTransaction transaction, Query query)
         {
             command.Transaction = transaction;
             command.CommandText = query.statement;
@@ -105,7 +105,7 @@ namespace Aquiris.SQLite
             }
         }
 
-        private static void PrepareParameters(SqliteCommand command, SQLiteQuery query)
+        private static void PrepareParameters(SqliteCommand command, Query query)
         {
             for (int index = 0; index < query.bindingsCount; index++)
             {
@@ -118,8 +118,8 @@ namespace Aquiris.SQLite
         private struct WorkItemInfo
         {
             public SQLiteDatabase database;
-            public SQLiteQuery query;
-            public SQLiteQuery[] queries;
+            public Query query;
+            public Query[] queries;
             public int queriesCount;
         }
     }

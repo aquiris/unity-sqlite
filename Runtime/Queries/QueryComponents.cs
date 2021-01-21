@@ -5,14 +5,14 @@ using Aquiris.SQLite.Shared;
 
 namespace Aquiris.SQLite.Queries
 {
-    internal struct SQLiteQueryComponents
+    internal struct QueryComponents
     {
         private static readonly StringBuilder _builder = new StringBuilder();
         private static readonly IQueryComponent[] _components = new IQueryComponent[Constants.maxNumberOfQueryComponents];
-        private SQLiteQuery _query;
+        private Query _query;
         private int _count;
 
-        public SQLiteQueryComponents(SQLiteQueryComponents other)
+        public QueryComponents(QueryComponents other)
         {
             _query = other._query;
             _count = other._count;
@@ -39,7 +39,7 @@ namespace Aquiris.SQLite.Queries
             _query.Add(bindings, count);
         }
 
-        public SQLiteQuery Build()
+        public Query Build()
         {
             _builder.Clear();
             
