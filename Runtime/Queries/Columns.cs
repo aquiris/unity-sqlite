@@ -1,7 +1,6 @@
 ﻿using Aquiris.SQLite.Queries.Components;
 using Aquiris.SQLite.Shared;
 using JetBrains.Annotations;
-using static Aquiris.SQLite.Shared.Constants;
 
 namespace Aquiris.SQLite.Queries
 {
@@ -19,10 +18,27 @@ namespace Aquiris.SQLite.Queries
             _components = components;
         }
 
+        /// <summary>
+        /// Adds an opening parenthesis before defining columns.
+        /// Should be used in CREATE TABLE columns statement for example.
+        /// </summary>
+        /// <returns>A copy of <see cref="Columns"/></returns>
         [UsedImplicitly]
         public Columns Begin()
         {
             _components.Add(new StringComponent(Constants.QueryComponents.PARENTHESIS_OPEN));
+            return this;
+        }
+        
+        /// <summary>
+        /// Adds an closing parenthesis after defining columns.
+        /// Should be used in CREATE TABLE columns statement for example.
+        /// </summary>
+        /// <returns></returns>
+        [UsedImplicitly]
+        public Columns End()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.PARENTHESIS_CLOSE));
             return this;
         }
 
@@ -52,13 +68,6 @@ namespace Aquiris.SQLite.Queries
             return this;
         }
 
-        [UsedImplicitly]
-        public Columns End()
-        {
-            _components.Add(new StringComponent(Constants.QueryComponents.PARENTHESIS_CLOSE));
-            return this;
-        }
-        
         [UsedImplicitly]
         public Table Table()
         {
