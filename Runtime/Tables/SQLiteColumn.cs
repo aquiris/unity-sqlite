@@ -1,6 +1,5 @@
 ﻿using System;
 using Aquiris.SQLite.Runtime.Tables;
-using JetBrains.Annotations;
 
 namespace Aquiris.SQLite.Tables
 {
@@ -8,16 +7,27 @@ namespace Aquiris.SQLite.Tables
     {
         private static readonly SQLiteColumnStatementRunner _runner = new SQLiteColumnStatementRunner();
         
-        public string name { get; }
+        public string name { get; private set; }
         public SQLiteDataType dataType { get; }
+        
+        internal string bindingName { get; private set; }
 
         public SQLiteColumn(string name, SQLiteDataType dataType)
         {
             this.name = name;
             this.dataType = dataType;
+            bindingName = $"@{name}";
         }
-        
-        public override string ToString()
+
+        public void Rename(string newName, SQLiteTable table, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
+        {
+            SQLiteQuery query = new SQLiteQuery($"ALTER TABLE {table.name} RENAME COLUMN {name} TO {newName}");
+            _runner.Run(query, database, onCompleteAction);
+            name = newName;
+            bindingName = $"@{name}";
+        }
+
+        internal string GetTableDeclaration()
         {
             return $"{name} {GetTypeString()}";
         }

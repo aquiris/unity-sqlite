@@ -1,5 +1,6 @@
 ﻿using System;
 using Aquiris.SQLite.Runtime.Tables;
+using Aquiris.SQLite.Shared;
 using Aquiris.SQLite.Tables;
 using JetBrains.Annotations;
 
@@ -51,7 +52,7 @@ namespace Aquiris.SQLite
         
         public void AddColumn(SQLiteDatabase database, SQLiteColumn column, Action<QueryResult> onCompleteAction)
         {
-            SQLiteQuery query = new SQLiteQuery($"ALTER TABLE {name} ADD COLUMN {column};");
+            SQLiteQuery query = new SQLiteQuery($"ALTER TABLE {name} ADD COLUMN {column.GetTableDeclaration()};");
             _runner.Run(query, database, onCompleteAction);
             
             int previousLength = _columns.Length;
@@ -61,18 +62,20 @@ namespace Aquiris.SQLite
         
         private static string CreateColumnsStatement(SQLiteColumn[] columns)
         {
+            string newLine = Constants.newLine;
+            string commaNewLine = Constants.commaNewLine;
+            
             string statement = "(";
             for (int index = 0; index < columns.Length; index++)
             {
                 SQLiteColumn column = columns[index];
-                statement += column.ToString();
+                statement += column.GetTableDeclaration();
                 if (index < columns.Length - 1)
                 {
-                    statement += $", {Environment.NewLine}";
+                    statement += commaNewLine;
                     continue;
                 }
-
-                statement += Environment.NewLine;
+                statement += newLine;
             }
             statement += ")";
             return statement;

@@ -119,5 +119,6 @@ namespace Aquiris.SQLite
         }
 
         internal SqliteCommand CreateCommand() => _connection.CreateCommand();
+        internal SqliteTransaction BeginTransaction() => _connection.BeginTransaction();
     }
 }
