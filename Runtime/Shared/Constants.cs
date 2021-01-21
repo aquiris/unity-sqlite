@@ -18,7 +18,7 @@ namespace Aquiris.SQLite.Shared
             public const string SEMICOLON = ";";
             public const string PARENTHESIS_OPEN = "(";
             public const string PARENTHESIS_CLOSE = ")";
-            public const string ALL = "*";
+            public const string SELECT_ALL = "*";
 
             public const string CREATE_TABLE = "CREATE TABLE";
             public const string TEMPORARY = "TEMPORARY";
@@ -56,11 +56,26 @@ namespace Aquiris.SQLite.Shared
             public const string DISTINCT = "DISTINCT";
             public const string FROM = "FROM";
             public const string WHERE = "WHERE";
+            public const string GROUP_BY = "GROUP BY";
+            public const string HAVING = "HAVING";
+            public const string WINDOW = "WINDOW";
+            public const string ALL = "ALL";
+            public const string UNION = "UNION";
+            public const string INTERSECT = "ITERSECT";
+            public const string EXCEPT = "EXCEPT";
+            public const string ORDER_BY = "ORDER_BY";
+            public const string COLLATE = "COLLATE";
+            public const string ASCENDING = "ASC";
+            public const string DESCENDING = "DESC";
+            public const string NULLS_FIRST = "NULLS FIRST";
+            public const string NULLS_LAST = "NULLS LAST";
+            public const string LIMIT = "LIMIT";
+            public const string OFFSET = "OFFSET";
 
             #region Operators
 
             public const string EQUAL = "==";
-            public const string NOT_EQUALS = "!=";
+            public const string NOT_EQUAL = "!=";
             public const string GREATER = ">";
             public const string LESS = "<";
             public const string GREATER_OR_EQUAL = ">=";

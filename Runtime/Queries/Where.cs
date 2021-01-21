@@ -41,6 +41,13 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
+        public Where NotEqual()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.NOT_EQUAL));
+            return this;
+        }
+
+        [UsedImplicitly]
         public Where Greater()
         {
             _components.Add(new StringComponent(Constants.QueryComponents.GREATER));
@@ -181,6 +188,12 @@ namespace Aquiris.SQLite.Queries
         public Select Select()
         {
             return new Select(_components);
+        }
+        
+        [UsedImplicitly]
+        public GroupBy GroupBy()
+        {
+            return new GroupBy(_components);
         }
     }
 }

@@ -22,9 +22,11 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
-        public Values Begin()
+        public Values Begin(bool beginValues = true)
         {
-            _components.Add(new StringComponent(Constants.QueryComponents.VALUES));
+            StringComponent values = new StringComponent(Constants.QueryComponents.VALUES);
+            StringComponent comma = new StringComponent(Constants.QueryComponents.COMMA);
+            _components.Add(beginValues ? values : comma);
             _components.Add(new StringComponent(Constants.QueryComponents.PARENTHESIS_OPEN));
             return this;
         }

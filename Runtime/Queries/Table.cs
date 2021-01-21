@@ -1,9 +1,17 @@
-﻿using Aquiris.SQLite.Queries.Components;
+﻿using System;
+using Aquiris.SQLite.Queries.Components;
 using Aquiris.SQLite.Shared;
 using JetBrains.Annotations;
 
 namespace Aquiris.SQLite.Queries
 {
+    public enum EditTableType
+    {
+        create,
+        alter,
+        drop,
+    }
+    
     public struct Table
     {
         private QueryComponents _components;
@@ -18,30 +26,25 @@ namespace Aquiris.SQLite.Queries
             _components = components;
         }
 
-        [UsedImplicitly]
-        public static Table Create()
+        public Table(EditTableType type)
         {
-            Table table = new Table();
-            table._components.Add(new StringComponent(Constants.QueryComponents.CREATE_TABLE));
-            return table;
+            _components = new QueryComponents();
+            switch (type)
+            {
+                case EditTableType.create:
+                    _components.Add(new StringComponent(Constants.QueryComponents.CREATE_TABLE));
+                    break;
+                case EditTableType.alter:
+                    _components.Add(new StringComponent(Constants.QueryComponents.ALTER_TABLE));
+                    break;
+                case EditTableType.drop:
+                    _components.Add(new StringComponent(Constants.QueryComponents.DROP_TABLE));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
         }
-
-        [UsedImplicitly]
-        public static Table Alter()
-        {
-            Table table = new Table();
-            table._components.Add(new StringComponent(Constants.QueryComponents.ALTER_TABLE));
-            return table;
-        }
-
-        [UsedImplicitly]
-        public static Table Drop()
-        {
-            Table table = new Table();
-            table._components.Add(new StringComponent(Constants.QueryComponents.DROP_TABLE));
-            return table;
-        }
-
+        
         [UsedImplicitly]
         public Table Temporary()
         {
