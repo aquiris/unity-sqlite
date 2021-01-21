@@ -1,7 +1,6 @@
 ﻿using Aquiris.SQLite.Queries.Components;
 using Aquiris.SQLite.Shared;
 using JetBrains.Annotations;
-using static Aquiris.SQLite.Shared.Constants;
 
 namespace Aquiris.SQLite.Queries
 {

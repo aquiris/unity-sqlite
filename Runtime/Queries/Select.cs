@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using Aquiris.SQLite.Queries.Components;
+﻿using Aquiris.SQLite.Queries.Components;
 using Aquiris.SQLite.Shared;
 using JetBrains.Annotations;
-using static Aquiris.SQLite.Shared.Constants;
 
 namespace Aquiris.SQLite.Queries
 {
@@ -13,11 +11,46 @@ namespace Aquiris.SQLite.Queries
         internal Select(QueryComponents components)
         {
             _components = components;
-            _components.Add(new StringComponent(Constants.QueryComponents.SELECT));
         }
 
         [UsedImplicitly]
-        public Columns DefineColumns()
+        public Select Distinct()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.SELECT));
+            _components.Add(new StringComponent(Constants.QueryComponents.DISTINCT));
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Select All()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.SELECT));
+            _components.Add(new StringComponent(Constants.QueryComponents.ALL));
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Select From()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.FROM));
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Select Name(string tableName)
+        {
+            _components.Add(new StringComponent(tableName));
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Where Where()
+        {
+            return new Where(_components);
+        }
+
+        [UsedImplicitly]
+        public Columns Columns()
         {
             return new Columns(_components);
         }

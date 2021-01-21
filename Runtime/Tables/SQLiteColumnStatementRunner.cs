@@ -7,7 +7,7 @@ namespace Aquiris.SQLite.Runtime.Tables
     internal class SQLiteColumnStatementRunner : SQLiteStatementRunner
     {
         private Action<QueryResult> _callbackAction = default;
-
+        
         public void Run(Query query, SQLiteDatabase database, Action<QueryResult> callbackAction)
         {
             _callbackAction = callbackAction;
