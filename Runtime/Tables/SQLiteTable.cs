@@ -75,6 +75,12 @@ namespace Aquiris.SQLite
             _columns[previousLength] = column;
         }
 
+        [UsedImplicitly]
+        public static void Run(Query query, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
+        {
+            _runner.Run(query, database, onCompleteAction);
+        }
+
         private Table DeclareColumns(Table table)
         {
             Columns cols = table.Columns().Begin();

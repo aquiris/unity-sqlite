@@ -18,25 +18,13 @@ namespace Aquiris.SQLite.Runtime.Insertion
         {
             _table = table;
         }
-
-        [UsedImplicitly]
-        public void Insert(Query query, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
-        {
-            _runner.Run(query, database, onCompleteAction);
-        }
-
+        
         [UsedImplicitly]
         public void Insert(InsertType type, SQLiteInsertData data, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
             Insert insert = new Insert(type).IntoTable(_table.name);
             Query query = DoValues(DoColumns(insert, data), data).Build();
             _runner.Run(query, database, onCompleteAction);
-        }
-
-        [UsedImplicitly]
-        public void Insert(Query[] queries, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
-        {
-            _runner.Run(queries, queries.Length, database, onCompleteAction);
         }
 
         public void Insert(InsertType type, SQLiteInsertData[] collection, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
@@ -49,6 +37,18 @@ namespace Aquiris.SQLite.Runtime.Insertion
                 _queriesBuffer[index] = query;
             }
             _runner.Run(_queriesBuffer, collection.Length, database, onCompleteAction);
+        }
+        
+        [UsedImplicitly]
+        public static void Run(Query query, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
+        {
+            _runner.Run(query, database, onCompleteAction);
+        }
+        
+        [UsedImplicitly]
+        public static void Run(Query[] queries, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
+        {
+            _runner.Run(queries, queries.Length, database, onCompleteAction);
         }
 
         private static Insert DoColumns(Insert insert, SQLiteInsertData data)

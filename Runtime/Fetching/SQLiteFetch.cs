@@ -13,15 +13,11 @@ namespace Aquiris.SQLite.Fetching
     public readonly struct SQLiteFetch
     {
         private static readonly SQLiteFetchStatementRunner _runner = new SQLiteFetchStatementRunner();
-
-        public SQLiteFetch(ISQLiteFetchParser parser = null)
-        {
-            _runner.parser = parser;
-        }
         
         [UsedImplicitly]
-        public void Fetch(Query query, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
+        public static void Run(ISQLiteFetchParser parser, Query query, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
+            _runner.parser = parser;
             _runner.Run(query, database, onCompleteAction);
         }
     }

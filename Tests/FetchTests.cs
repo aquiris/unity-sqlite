@@ -53,13 +53,13 @@ namespace Aquiris.SQLite.Tests
             // now begins the test
 
             Query query = new Select()
+                .Begin()
                 .All()
                 .From()
                 .Name("TestTable")
                 .Build();
 
-            SQLiteFetch fetch = new SQLiteFetch();
-            fetch.Fetch(query, _database, result =>
+            SQLiteFetch.Run(null, query, _database, result =>
             {
                 Assert.IsTrue(result.success);
                 Assert.IsNotNull(result.value);

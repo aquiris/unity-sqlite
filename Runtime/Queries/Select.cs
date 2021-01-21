@@ -14,9 +14,15 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
-        public Select Distinct()
+        public Select Begin()
         {
             _components.Add(new StringComponent(Constants.QueryComponents.SELECT));
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Select Distinct()
+        {
             _components.Add(new StringComponent(Constants.QueryComponents.DISTINCT));
             return this;
         }
@@ -24,7 +30,6 @@ namespace Aquiris.SQLite.Queries
         [UsedImplicitly]
         public Select All()
         {
-            _components.Add(new StringComponent(Constants.QueryComponents.SELECT));
             _components.Add(new StringComponent(Constants.QueryComponents.SELECT_ALL));
             return this;
         }
