@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Mono.Data.Sqlite;
+using System.Threading;
 using NUnit.Framework;
 
 namespace Aquiris.SQLite.Tests.Shared
@@ -7,6 +7,7 @@ namespace Aquiris.SQLite.Tests.Shared
     public abstract class BaseTestClass
     {
         protected static SQLiteDatabase _database = default;
+        protected static AutoResetEvent _waiter = default;
         
         [SetUp]
         public virtual void SetUp()
@@ -22,6 +23,16 @@ namespace Aquiris.SQLite.Tests.Shared
             
             if (!Directory.Exists(Constants.databaseParentPath)) return;
             Directory.Delete(Constants.databaseParentPath, true);
+        }
+
+        protected static void CreateWaiter()
+        {
+            _waiter = new AutoResetEvent(false);
+        }
+        
+        protected static void WaitOne()
+        {
+            Assert.IsTrue(_waiter.WaitOne(Constants.waitTimeOut));
         }
 
         protected static void CreateDatabase()
