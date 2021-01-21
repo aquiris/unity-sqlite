@@ -1,87 +1,71 @@
-﻿using System.Collections.Generic;
-using Aquiris.SQLite.Shared;
-using Aquiris.SQLite.Tables;
+﻿using Aquiris.SQLite.Queries.Components;
 using JetBrains.Annotations;
 
 namespace Aquiris.SQLite.Queries
 {
-    public struct SQLiteTable : IQueryComponent
+    public struct SQLiteTable
     {
-        private static readonly SQLiteColumn[] _columnsBuffer = new SQLiteColumn[Constants.maxNumberOfBindings];
-
-        private readonly string _name;
-        private readonly bool _temporary;
         private SQLiteQueryComponents _components;
-        private bool _ifNotExists;
-        private bool _withoutRowId;
-        private SQLiteAs? _asSelect;
-        private int _columnCount;
 
-        public KeyValuePair<string, object>[] bindings { get; }
-        public int bindingCount { get; }
+        internal SQLiteTable(SQLiteTable other)
+        {
+            _components = other._components;
+        }
 
-        internal SQLiteTable(SQLiteQueryComponents components, string name, bool temporary = false) : this()
+        internal SQLiteTable(SQLiteQueryComponents components)
         {
             _components = components;
-            _name = name;
-            _temporary = temporary;
-            _ifNotExists = false;
+        }
+        
+        [UsedImplicitly]
+        public static SQLiteTable Create()
+        {
+            SQLiteTable table = new SQLiteTable();
+            table._components.Add(new CreateComponent());
+            return table;
+        }
+
+        [UsedImplicitly]
+        public SQLiteTable Temporary()
+        {
+            _components.Add(new TemporaryComponent());
+            return this;
         }
 
         [UsedImplicitly]
         public SQLiteTable IfNotExists()
         {
-            _ifNotExists = true;
+            _components.Add(new IfNotExistsComponent());
             return this;
         }
 
         [UsedImplicitly]
-        public SQLiteTable As(SQLiteSelect select)
+        public SQLiteTable TableName(string name)
         {
-            _asSelect = new SQLiteAs(select);
+            _components.Add(new TableNameComponent(name));
             return this;
         }
 
         [UsedImplicitly]
-        public SQLiteTable AddColumn(SQLiteColumn column)
+        public SQLiteSelectAs As()
         {
-            _columnsBuffer[_columnCount] = column;
-            _columnCount += 1;
-            return this;
+            return new SQLiteSelectAs(_components);
+        }
+
+        [UsedImplicitly]
+        public SQLiteColumn DefineColumns()
+        {
+            return new SQLiteColumn(_components);
         }
 
         [UsedImplicitly]
         public SQLiteTable WithoutRowId()
         {
-            _withoutRowId = true;
+            _components.Add(new WithoutRowIdComponent());
             return this;
         }
 
-        public SQLiteQuery Finish()
-        {
-            _components.Add(this);
-            return _components.Build();
-        }
-
-        public string Build()
-        {
-            string statement;
-            switch (_temporary)
-            {
-                case true when _ifNotExists:
-                    statement = $"TEMPORARY TABLE IF NOT EXISTS {_name}";
-                    break;
-                case true:
-                    statement = $"TEMPORARY TABLE {_name}";
-                    break;
-                default:
-                    statement = $"TABLE IF NOT EXISTS {_name}";
-                    break;
-            }
-            if (_asSelect.HasValue) statement += $" {_asSelect.Value.Build()}";
-            statement += $" {SQLiteColumn.GetCreateTableColumnsStatement(_columnsBuffer, _columnCount)}";
-            if (_withoutRowId) statement += " WITHOUT ROWID";
-            return statement;
-        }
+        [UsedImplicitly]
+        public SQLiteQuery Build() => _components.Build();
     }
 }

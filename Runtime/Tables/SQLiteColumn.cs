@@ -31,23 +31,9 @@ namespace Aquiris.SQLite.Tables
 
         internal string GetTableDeclaration()
         {
-            return $"{name} {GetTypeString()}";
+            return $"{name} {dataType.Convert()}";
         }
 
-        private string GetTypeString()
-        {
-            switch (dataType)
-            {
-                case SQLiteDataType.Blob: return "BLOB";
-                case SQLiteDataType.Integer: return "INTEGER";
-                case SQLiteDataType.Numeric: return "NUMERIC";
-                case SQLiteDataType.Real: return "REAL";
-                case SQLiteDataType.Text: return "TEXT";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null);
-            }
-        }
-        
         internal static string GetCreateTableColumnsStatement(SQLiteColumn[] columns, int count)
         {
             string newLine = Constants.newLine;

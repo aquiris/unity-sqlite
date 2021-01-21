@@ -7,17 +7,6 @@ using JetBrains.Annotations;
 
 namespace Aquiris.SQLite.Runtime.Insertion
 {
-    public enum SQLiteInsertType
-    {
-        insert,
-        insertOrAbort,
-        insertOrFail,
-        insertOrIgnore,
-        insertOrReplace,
-        insertOrRollback,
-        replace,
-    }
-    
     public readonly struct SQLiteInsert
     {
         private static readonly SQLiteQuery[] _queriesBuffer = new SQLiteQuery[Constants.maxNumberOfQueries];
@@ -94,21 +83,6 @@ namespace Aquiris.SQLite.Runtime.Insertion
             }
             columns += ")";
             values += ")";
-        }
-
-        private static string GetInsertType(SQLiteInsertType type)
-        {
-            switch (type)
-            {
-                case SQLiteInsertType.insert: return "INSERT INTO";
-                case SQLiteInsertType.insertOrAbort: return "INSERT OR ABORT INTO";
-                case SQLiteInsertType.insertOrFail: return "INSERT OR FAIL INTO";
-                case SQLiteInsertType.insertOrIgnore: return "INSERT OR IGNORE INTO";
-                case SQLiteInsertType.insertOrReplace: return "INSERT OR REPLACE INTO";
-                case SQLiteInsertType.insertOrRollback: return "INSERT OR ROLLBACK INTO";
-                case SQLiteInsertType.replace: return "REPLACE INTO";
-                default: throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
         }
     }
 }
