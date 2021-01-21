@@ -2,7 +2,6 @@
 using Aquiris.SQLite.Tables;
 using Aquiris.SQLite.Tests.Shared;
 using NUnit.Framework;
-using UnityEditor.VersionControl;
 
 namespace Aquiris.SQLite.Tests
 {
@@ -64,7 +63,8 @@ namespace Aquiris.SQLite.Tests
 
             SQLiteInsert insert = new SQLiteInsert(table);
 
-            SQLiteInsertData[] collection = new SQLiteInsertData[3];
+            int itemCount = 10000;
+            SQLiteInsertData[] collection = new SQLiteInsertData[itemCount];
             for (int index = 0; index < collection.Length; index++)
             {
                 SQLiteInsertData data = new SQLiteInsertData(table);
@@ -77,7 +77,7 @@ namespace Aquiris.SQLite.Tests
             insert.Insert(SQLiteInsertType.insert, collection, _database, result =>
             {
                 Assert.IsTrue(result.success);
-                Assert.AreEqual(3, result.value);
+                Assert.AreEqual(itemCount, result.value);
                 _waiter.Set();
             });
             

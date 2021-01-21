@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Aquiris.SQLite.Shared;
 using Aquiris.SQLite.Tables;
 using JetBrains.Annotations;
@@ -15,6 +14,7 @@ namespace Aquiris.SQLite.Runtime.Insertion
         insertOrIgnore,
         insertOrReplace,
         insertOrRollback,
+        replace,
     }
     
     public readonly struct SQLiteInsert
@@ -105,6 +105,7 @@ namespace Aquiris.SQLite.Runtime.Insertion
                 case SQLiteInsertType.insertOrIgnore: return "INSERT OR IGNORE INTO";
                 case SQLiteInsertType.insertOrReplace: return "INSERT OR REPLACE INTO";
                 case SQLiteInsertType.insertOrRollback: return "INSERT OR ROLLBACK INTO";
+                case SQLiteInsertType.replace: return "REPLACE INTO";
                 default: throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
