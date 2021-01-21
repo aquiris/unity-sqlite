@@ -2,6 +2,7 @@
 using Aquiris.SQLite.Tables;
 using Aquiris.SQLite.Tests.Shared;
 using NUnit.Framework;
+using UnityEditor.VersionControl;
 
 namespace Aquiris.SQLite.Tests
 {
@@ -34,7 +35,7 @@ namespace Aquiris.SQLite.Tests
             data.Add(_intColumn, 255);
             data.Add(_floatColumn, 3.14F);
             data.Add(_stringColumn, "This is a string");
-            insert.Insert(data, _database, result =>
+            insert.Insert(SQLiteInsertType.insert, data, _database, result =>
             {
                 Assert.IsTrue(result.success);
                 Assert.AreEqual(1, result.value); // number of added rows
@@ -73,10 +74,47 @@ namespace Aquiris.SQLite.Tests
                 collection[index] = data;
             }
             
-            insert.Insert(collection, _database, result =>
+            insert.Insert(SQLiteInsertType.insert, collection, _database, result =>
             {
                 Assert.IsTrue(result.success);
                 Assert.AreEqual(3, result.value);
+                _waiter.Set();
+            });
+            
+            WaitOne();
+        }
+
+        [Test]
+        public void TestInsertOrAbort()
+        {
+            CreateWaiter();
+            
+            CreateDatabase();
+            _database.Open();
+
+            SQLiteTable table = GetTable();
+            table.Create(_database, result =>
+            {
+                Assert.IsTrue(result.success);
+                _waiter.Set();
+            });
+            
+            WaitOne();
+
+            SQLiteInsert insert = new SQLiteInsert(table);
+            SQLiteInsertData data = new SQLiteInsertData(table);
+            data.Add(_intColumn, 10);
+            insert.Insert(SQLiteInsertType.insert, data, _database, result =>
+            {
+                Assert.IsTrue(result.success);
+                _waiter.Set();
+            });
+            
+            WaitOne();
+            
+            insert.Insert(SQLiteInsertType.insertOrAbort, data, _database, result =>
+            {
+                Assert.IsTrue(result.success);
                 _waiter.Set();
             });
             
