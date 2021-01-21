@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using Aquiris.SQLite.Tables;
 using Aquiris.SQLite.Tests.Shared;
 using Mono.Data.Sqlite;
@@ -187,6 +188,35 @@ namespace Aquiris.SQLite.Tests
             });
             
             Assert.IsTrue(waiter.WaitOne(Constants.waitTimeOut));
+        }
+
+        [Test]
+        public void TestRenameColumnSuccess()
+        {
+            AutoResetEvent waiter = new AutoResetEvent(false);
+            
+            CreateDatabase();
+            _database.Open();
+
+            SQLiteTable table = GetTable();
+            table.Create(_database, result =>
+            {
+                Assert.IsTrue(result.success);
+                waiter.Set();
+            });
+            
+            Assert.IsTrue(waiter.WaitOne(1000));
+
+            SQLiteColumn column = Array.Find(table.columns, each => each.name.Equals("Column3"));
+            column.Rename("Column3_4", table, _database, result =>
+            {
+                Assert.IsTrue(result.success);
+                // here we're hoping that the query execution was successful
+                Assert.AreEqual("Column3_4", column.name);
+                waiter.Set();
+            });
+            
+            Assert.IsTrue(waiter.WaitOne(1000));
         }
 
         private static SQLiteTable GetTable()
