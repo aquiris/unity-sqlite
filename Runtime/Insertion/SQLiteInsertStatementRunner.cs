@@ -1,4 +1,5 @@
 ﻿using System;
+using Aquiris.SQLite.Queries;
 using Mono.Data.Sqlite;
 
 namespace Aquiris.SQLite.Runtime.Insertion

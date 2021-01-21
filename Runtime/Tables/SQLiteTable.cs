@@ -1,7 +1,6 @@
 ﻿using System;
 using Aquiris.SQLite.Queries;
 using Aquiris.SQLite.Runtime.Tables;
-using Aquiris.SQLite.Shared;
 using Aquiris.SQLite.Tables;
 using JetBrains.Annotations;
 
@@ -25,14 +24,14 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void Create(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            SQLiteQuery query = new SQLiteQuery($"CREATE TABLE {name} {SQLiteColumn.GetCreateTableColumnsStatement(_columns)};");
+            SQLiteQuery query = new SQLiteQuery($"CREATE TABLE {name} {SQLiteColumn.GetCreateTableColumnsStatement(_columns, _columns.Length)};");
             _runner.Run(query, database, onCompleteAction);
         }
 
         [UsedImplicitly]
         public void CreateIfNotExists(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            SQLiteQuery query = new SQLiteQuery($"CREATE TABLE IF NOT EXISTS {name} {SQLiteColumn.GetCreateTableColumnsStatement(_columns)};");
+            SQLiteQuery query = new SQLiteQuery($"CREATE TABLE IF NOT EXISTS {name} {SQLiteColumn.GetCreateTableColumnsStatement(_columns, _columns.Length)};");
             _runner.Run(query, database, onCompleteAction);
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Aquiris.SQLite.Queries;
 using Aquiris.SQLite.Shared;
 using Aquiris.SQLite.Tables;
 using JetBrains.Annotations;
