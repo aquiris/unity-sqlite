@@ -14,12 +14,11 @@ namespace Aquiris.SQLite.Tests
         [Test]
         public void TestInnerJoin()
         {
-            CreateWaiter();
-            
             CreateDatabase();
             _database.Open();
 
-            Query query = new Table(TableMode.create)
+            Query query = new Table()
+                .Begin(TableMode.create)
                 .Name("doctors")
                 .Columns()
                 .Begin()
@@ -32,12 +31,10 @@ namespace Aquiris.SQLite.Tests
             SQLiteTable.Run(query, _database, result =>
             {
                 Assert.IsTrue(result.success);
-                WaiterSet();
             });
             
-            WaitOne();
-
-            query = new Table(TableMode.create)
+            query = new Table()
+                .Begin(TableMode.create)
                 .Name("visits")
                 .Columns()
                 .Begin()
@@ -50,11 +47,8 @@ namespace Aquiris.SQLite.Tests
             SQLiteTable.Run(query, _database, result =>
             {
                 Assert.IsTrue(result.success);
-                WaiterSet();
             });
             
-            WaitOne();
-
             const int numberOfInsertions = 9;
             Query[] queries = new Query[numberOfInsertions];
             queries[0] = InsertNewDoctor(210, "Dr. John Linga", "M D");
@@ -71,11 +65,8 @@ namespace Aquiris.SQLite.Tests
             {
                 Assert.IsTrue(result.success);
                 Assert.AreEqual(numberOfInsertions, result.value);
-                WaiterSet();
             });
             
-            WaitOne();
-
             query = new Select()
                 .Begin()
                 .Columns()
@@ -94,7 +85,7 @@ namespace Aquiris.SQLite.Tests
                 .Where()
                 .Column("doctors.degree")
                 .Equal()
-                .Binding("degreeValue", "M D")
+                .Binding("M D")
                 .Select()
                 .Build();
             SQLiteFetch.Run(null, query, _database, result =>
@@ -108,58 +99,42 @@ namespace Aquiris.SQLite.Tests
                 Assert.IsTrue(results[0].ContainsKey("name"));
                 Assert.IsTrue(results[0].ContainsKey("visitor_name"));
 
-                WaiterSet();
-                
                 Console.WriteLine(results);
             });
-            
-            WaitOne();
-        }
-
-        [Test]
-        public void TestOuterJoins()
-        {
-            
         }
 
         private static Query InsertNewDoctor(int id, string name, string degree)
         {
-            return new Insert(InsertMode.insert)
+            return new Insert()
+                .Begin(InsertMode.insert)
                 .IntoTable("doctors")
-                .Columns()
-                .Begin()
+                .Columns().Begin()
                 .AddColumn("id").Separator()
                 .AddColumn("name").Separator()
-                .AddColumn("degree")
-                .End()
+                .AddColumn("degree").End()
                 .Insert()
-                .Values()
-                .Begin()
-                .Add("id", id).Separator()
-                .Add("name", name).Separator()
-                .Add("degree", degree)
-                .End()
+                .Values().Begin()
+                .Bind(id).Separator()
+                .Bind(name).Separator()
+                .Bind(degree).End()
                 .Insert()
                 .Build();
         }
 
         private static Query InsertNewVisit(int id, string name, string date)
         {
-            return new Insert(InsertMode.insert)
+            return new Insert()
+                .Begin(InsertMode.insert)
                 .IntoTable("visits")
-                .Columns()
-                .Begin()
+                .Columns().Begin()
                 .AddColumn("doctor_id").Separator()
                 .AddColumn("name").Separator()
-                .AddColumn("visit_date")
-                .End()
+                .AddColumn("visit_date").End()
                 .Insert()
-                .Values()
-                .Begin()
-                .Add("doctor_id", id).Separator()
-                .Add("name", name).Separator()
-                .Add("visit_date", date)
-                .End()
+                .Values().Begin()
+                .Bind(id).Separator()
+                .Bind(name).Separator()
+                .Bind(date).End()
                 .Insert()
                 .Build();
         }

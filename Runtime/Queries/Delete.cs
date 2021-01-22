@@ -35,6 +35,13 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
+        public Delete End()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.SEMICOLON));
+            return this;
+        }
+
+        [UsedImplicitly]
         public Delete From()
         {
             _components.Add(new StringComponent(Constants.QueryComponents.FROM));

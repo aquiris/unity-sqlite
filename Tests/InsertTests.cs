@@ -17,8 +17,6 @@ namespace Aquiris.SQLite.Tests
         [Test]
         public void TestInsertingData()
         {
-            CreateWaiter();
-            
             CreateDatabase();
             _database.Open();
 
@@ -26,32 +24,19 @@ namespace Aquiris.SQLite.Tests
             table.Create(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                WaiterSet();
             });
             
-            WaitOne();
-
-            SQLiteInsert insert = new SQLiteInsert(table);
-            
-            SQLiteInsertData data = new SQLiteInsertData(table);
-            data.Add(_intColumn, 255);
-            data.Add(_floatColumn, 3.14F);
-            data.Add(_stringColumn, "This is a string");
-            insert.Insert(InsertMode.insert, data, _database, result =>
+            Query query = CreateInsert(new Insert(), 1).Build();
+            SQLiteInsert.Run(query, _database, result =>
             {
                 Assert.IsTrue(result.success);
                 Assert.AreEqual(1, result.value); // number of added rows
-                WaiterSet();
             });
-            
-            WaitOne();
         }
 
         [Test]
         public void TestInsertingBatchData()
         {
-            CreateWaiter();
-            
             CreateDatabase();
             _database.Open();
 
@@ -59,39 +44,35 @@ namespace Aquiris.SQLite.Tests
             table.Create(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                WaiterSet();
             });
             
-            WaitOne();
-
-            SQLiteInsert insert = new SQLiteInsert(table);
-
-            const int itemCount = 10000;
-            SQLiteInsertData[] collection = new SQLiteInsertData[itemCount];
-            for (int index = 0; index < collection.Length; index++)
+            const int itemCount = 1000;
+            Values values = new Insert()
+                .Begin(InsertMode.insert)
+                .IntoTable("TestTable")
+                .Columns().Begin()
+                .AddColumn(_intColumn.name).Separator()
+                .AddColumn(_floatColumn.name).Separator()
+                .AddColumn(_stringColumn.name).End()
+                .Values();
+            for (int index = 0; index < itemCount; index++)
             {
-                SQLiteInsertData data = new SQLiteInsertData(table);
-                data.Add(_intColumn, 255 * index);
-                data.Add(_floatColumn, 3.14F * index);
-                data.Add(_stringColumn, $"Value of {index}");
-                collection[index] = data;
+                values = AddValue(values, index == 0,
+                    255 * index,
+                    3.14F * index,
+                    $"Value of {index}");
             }
-            
-            insert.Insert(InsertMode.insert, collection, _database, result =>
+            Query query = values.Insert().End().Build();
+            SQLiteInsert.Run(query, _database, result =>
             {
                 Assert.IsTrue(result.success);
                 Assert.AreEqual(itemCount, result.value);
-                WaiterSet();
             });
-            
-            WaitOne();
         }
 
         [Test]
         public void TestInsertOrAbort()
         {
-            CreateWaiter();
-            
             CreateDatabase();
             _database.Open();
 
@@ -99,39 +80,57 @@ namespace Aquiris.SQLite.Tests
             table.Create(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                WaiterSet();
             });
             
-            WaitOne();
+            Query query = CreateInsert(new Insert(), 10).Build();
+            
+            SQLiteInsert.Run(query, _database, result =>
+            {
+                Assert.IsTrue(result.success);
+            });
 
-            SQLiteInsert insert = new SQLiteInsert(table);
-            SQLiteInsertData data = new SQLiteInsertData(table);
-            data.Add(_intColumn, 10);
-            insert.Insert(InsertMode.insert, data, _database, result =>
+            query = CreateInsert(new Insert(), 10, InsertMode.insertOrAbort)
+                .Build();
+            
+            SQLiteInsert.Run(query, _database, result =>
             {
                 Assert.IsTrue(result.success);
-                WaiterSet();
             });
-            
-            WaitOne();
-            
-            insert.Insert(InsertMode.insertOrAbort, data, _database, result =>
-            {
-                Assert.IsTrue(result.success);
-                WaiterSet();
-            });
-            
-            WaitOne();
         }
 
         private static SQLiteTable GetTable()
         {
-            return new SQLiteTable("MyTable",new []
+            return new SQLiteTable("TestTable",new []
             {
                 _intColumn,
                 _floatColumn,
                 _stringColumn,
             });
+        }
+        
+        private static Insert CreateInsert(Insert insert, int index, InsertMode mode = InsertMode.insert)
+        {
+            insert = insert.Begin(mode)
+                .IntoTable("TestTable")
+                .Columns().Begin()
+                .AddColumn(_intColumn.name).Separator()
+                .AddColumn(_floatColumn.name).Separator()
+                .AddColumn(_stringColumn.name).End()
+                .Insert();
+            return AddValue(insert.Values(), 
+                    true, 
+                    255 * index, 
+                    3.14F * index, 
+                    $"Value of {index}")
+                .Insert().End(); 
+        }
+
+        private static Values AddValue(Values values, bool first, int column1, float column2, string column3)
+        {
+            return values.Begin(first)
+                .Bind(column1).Separator()
+                .Bind(column2).Separator()
+                .Bind(column3).End();
         }
     }
 }

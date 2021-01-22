@@ -20,15 +20,20 @@ namespace Aquiris.SQLite.Tables
 
         public void Rename(string newName, SQLiteTable table, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Query query = new Table(TableMode.alter)
+            Query query = new Table()
+                .Begin(TableMode.alter)
                 .Name(table.name)
                 .Columns()
                 .Rename(name, newName)
                 .Table()
                 .Build();
-            _runner.Run(query, database, onCompleteAction);
+            
             name = newName;
+            
+            _runner.Run(query, database, onCompleteAction);
         }
+        
+        
     }
 }
 

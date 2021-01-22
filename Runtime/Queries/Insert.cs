@@ -30,10 +30,17 @@ namespace Aquiris.SQLite.Queries
         }
         
         [UsedImplicitly]
-        public Insert(InsertMode mode)
+        public Insert Begin(InsertMode mode)
         {
-            _components = new QueryComponents();
             _components.Add(new InsertComponent(mode));
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Insert End()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.SEMICOLON));
+            return this;
         }
 
         [UsedImplicitly]
