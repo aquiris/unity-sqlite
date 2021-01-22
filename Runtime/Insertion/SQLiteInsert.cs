@@ -18,7 +18,7 @@ namespace Aquiris.SQLite.Runtime.Insertion
         {
             _table = table;
         }
-
+        
         [UsedImplicitly]
         public void Insert(InsertType type, SQLiteInsertData data, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
@@ -38,6 +38,18 @@ namespace Aquiris.SQLite.Runtime.Insertion
             }
             _runner.Run(_queriesBuffer, collection.Length, database, onCompleteAction);
         }
+        
+        [UsedImplicitly]
+        public static void Run(Query query, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
+        {
+            _runner.Run(query, database, onCompleteAction);
+        }
+        
+        [UsedImplicitly]
+        public static void Run(Query[] queries, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
+        {
+            _runner.Run(queries, queries.Length, database, onCompleteAction);
+        }
 
         private static Insert DoColumns(Insert insert, SQLiteInsertData data)
         {
@@ -45,8 +57,9 @@ namespace Aquiris.SQLite.Runtime.Insertion
             for (int index = 0; index < data.dataCount; index++)
             {
                 KeyValuePair<SQLiteColumn, object> pair = data.data[index];
+                cols = cols.AddColumn(pair.Key.name);
                 bool addComma = index < data.dataCount - 1;
-                cols = cols.AddColumn(pair.Key.name, addComma);
+                if (addComma) cols = cols.Separator();
             }
             return cols.End().Insert();
         }
@@ -57,8 +70,9 @@ namespace Aquiris.SQLite.Runtime.Insertion
             for (int index = 0; index < data.dataCount; index++)
             {
                 KeyValuePair<SQLiteColumn, object> pair = data.data[index];
+                values = values.Add(pair.Key.name, pair.Value);
                 bool addComma = index < data.dataCount - 1;
-                values = values.Add(pair.Key.name, pair.Value, addComma);
+                if (addComma) values = values.Separator();
             }
             return values.End().Insert();
         }

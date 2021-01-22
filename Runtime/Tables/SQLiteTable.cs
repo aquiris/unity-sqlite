@@ -24,7 +24,7 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void Create(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Table table = Table.Create()
+            Table table = new Table(EditTableType.create)
                 .Name(name);
             Query query = DeclareColumns(table).Build();
             _runner.Run(query, database, onCompleteAction);
@@ -33,7 +33,7 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void CreateIfNotExists(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Table table = Table.Create()
+            Table table = new Table(EditTableType.create)
                 .IfNotExists()
                 .Name(name);
             Query query = DeclareColumns(table).Build();
@@ -43,7 +43,7 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void Rename(string newName, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Query query = Table.Alter()
+            Query query = new Table(EditTableType.alter)
                 .Name(name)
                 .RenameTo(newName)
                 .Build();
@@ -54,7 +54,7 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void Drop(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Query query = Table.Drop()
+            Query query = new Table(EditTableType.drop)
                 .Name(name)
                 .Build();
             _runner.Run(query, database, onCompleteAction);
@@ -62,10 +62,10 @@ namespace Aquiris.SQLite
 
         public void AddColumn(SQLiteDatabase database, SQLiteColumn column, Action<QueryResult> onCompleteAction)
         {
-            Query query = Table.Alter()
+            Query query = new Table(EditTableType.alter)
                 .Name(name)
                 .AddColumn()
-                .DeclareColumn(column.name, column.dataType, false)
+                .DeclareColumn(column.name, column.dataType)
                 .Table()
                 .Build();
             _runner.Run(query, database, onCompleteAction);
@@ -75,14 +75,21 @@ namespace Aquiris.SQLite
             _columns[previousLength] = column;
         }
 
+        [UsedImplicitly]
+        public static void Run(Query query, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
+        {
+            _runner.Run(query, database, onCompleteAction);
+        }
+
         private Table DeclareColumns(Table table)
         {
             Columns cols = table.Columns().Begin();
             for (int index = 0; index < _columns.Length; index++)
             {
                 SQLiteColumn column = _columns[index];
+                cols = cols.DeclareColumn(column.name, column.dataType);
                 bool addComma = index < _columns.Length - 1;
-                cols = cols.DeclareColumn(column.name, column.dataType, addComma);
+                if (addComma) cols = cols.Separator();
             }
             return cols.End().Table();
         }

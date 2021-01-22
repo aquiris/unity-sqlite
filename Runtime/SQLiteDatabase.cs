@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.IO;
+using Aquiris.SQLite.Threading;
 using JetBrains.Annotations;
 using Mono.Data.Sqlite;
 using UnityEngine;
@@ -34,9 +35,7 @@ namespace Aquiris.SQLite
         
         public SQLiteDatabase(string filePath)
         {
-#if !UNITY_INCLUDE_TESTS
             ThreadSafety.Initialize();
-#endif
 
             SqliteConnectionStringBuilder connectionStringBuilder = new SqliteConnectionStringBuilder
             {
@@ -57,10 +56,14 @@ namespace Aquiris.SQLite
                 _connection.Open();
                 return OpenResult.Open;
             }
+#if UNITY_EDITOR
             catch (Exception ex)
             {
-#if UNITY_EDITOR
                 Debug.LogWarning(ex);
+#else
+            catch
+            {
+                
 #endif
                 return OpenResult.Failure;
             }
@@ -76,10 +79,13 @@ namespace Aquiris.SQLite
                 _connection.Close();
                 return CloseResult.Close;
             }
+#if UNITY_EDITOR
             catch (Exception ex)
             {
-#if UNITY_EDITOR
                 Debug.LogWarning(ex);
+#else
+            catch 
+            {
 #endif
                 return CloseResult.Failure;
             }
@@ -96,10 +102,13 @@ namespace Aquiris.SQLite
                 SqliteConnection.CreateFile(databaseFilePath);
                 return CreateResult.Create;
             }
+#if UNITY_EDITOR
             catch (SqliteException ex)
             {
-#if UNITY_EDITOR
                 Debug.LogWarning(ex);                
+#else
+            catch
+            {
 #endif
                 return CreateResult.Failure;
             }

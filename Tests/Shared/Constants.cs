@@ -8,6 +8,7 @@ namespace Aquiris.SQLite.Tests.Shared
         public static readonly string databaseParentPath = Path.Combine(Application.dataPath, "SQLite");
         public static readonly string databaseFilePath = Path.Combine(databaseParentPath, "database.db");
 
-        public static readonly int waitTimeOut = 1000;
+        // will wait util the value is Set
+        public const int waitTimeOut = -1; 
     }
 }
