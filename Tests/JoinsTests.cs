@@ -85,9 +85,8 @@ namespace Aquiris.SQLite.Tests
                 .Select()
                 .From()
                 .Name("doctors")
-                .Join()
-                .Inner()
-                .Name("visits")
+                .InnerJoin()
+                .Table("visits")
                 .On()
                 .Column("doctors.id")
                 .Equal()
@@ -115,6 +114,12 @@ namespace Aquiris.SQLite.Tests
             });
             
             WaitOne();
+        }
+
+        [Test]
+        public void TestOuterJoins()
+        {
+            
         }
 
         private static Query InsertNewDoctor(int id, string name, string degree)

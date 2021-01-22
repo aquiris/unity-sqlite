@@ -36,7 +36,7 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
-        public Joins Name(string name)
+        public Joins Table(string name)
         {
             _components.Add(new StringComponent(Constants.QueryComponents.JOIN));
             _components.Add(new StringComponent(name));
