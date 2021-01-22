@@ -3,20 +3,17 @@ using System.Collections.Generic;
 using System.Threading;
 using Aquiris.SQLite.Queries;
 using Aquiris.SQLite.Shared;
-using JetBrains.Annotations;
 using Mono.Data.Sqlite;
 using UnityEngine;
 
 namespace Aquiris.SQLite
 {
-    internal abstract class SQLiteStatementRunner
+    public abstract class SQLiteStatementRunner
     {
         private static readonly object _lock = new object();
-        
         private readonly Action _completedAction = default;
-
         private QueryResult _result = default;
-
+        
         protected SQLiteStatementRunner()
         {
             _completedAction = Completed;
