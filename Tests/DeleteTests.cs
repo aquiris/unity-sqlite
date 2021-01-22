@@ -48,6 +48,9 @@ namespace Aquiris.SQLite.Tests
 
             Query[] queries = new Query[2];
             queries[0] = query;
+            
+            query = new Query(query.statement);
+            query.Bind("@Column10", 2);
             query.Bind("@Column21", "Meu amigo");
             queries[1] = query;
             
