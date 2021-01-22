@@ -84,7 +84,7 @@ namespace Aquiris.SQLite.Tests
                 .AddColumn("visits.name").As().Alias("visitor_name")
                 .Select()
                 .From()
-                .Name("doctors")
+                .TableName("doctors")
                 .InnerJoin()
                 .Table("visits")
                 .On()

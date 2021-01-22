@@ -56,7 +56,7 @@ namespace Aquiris.SQLite.Tests
                 .Begin()
                 .All()
                 .From()
-                .Name("TestTable")
+                .TableName("TestTable")
                 .Build();
 
             SQLiteFetch.Run(null, query, _database, result =>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.IO;
+using Aquiris.SQLite.Threading;
 using JetBrains.Annotations;
 using Mono.Data.Sqlite;
 using UnityEngine;
@@ -34,9 +35,7 @@ namespace Aquiris.SQLite
         
         public SQLiteDatabase(string filePath)
         {
-#if !UNITY_INCLUDE_TESTS
             ThreadSafety.Initialize();
-#endif
 
             SqliteConnectionStringBuilder connectionStringBuilder = new SqliteConnectionStringBuilder
             {
