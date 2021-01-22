@@ -42,7 +42,7 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
-        public Select Name(string tableName)
+        public Select TableName(string tableName)
         {
             _components.Add(new StringComponent(tableName));
             return this;
@@ -112,6 +112,24 @@ namespace Aquiris.SQLite.Queries
         public Columns Columns()
         {
             return new Columns(_components);
+        }
+
+        [UsedImplicitly]
+        public Joins InnerJoin()
+        {
+            return new Joins(_components).Inner();
+        }
+
+        [UsedImplicitly]
+        public Joins LeftJoin()
+        {
+            return new Joins(_components).Left();
+        }
+
+        [UsedImplicitly]
+        public Joins LeftOuterJoin()
+        {
+            return new Joins(_components).Left().Outer();
         }
 
         [UsedImplicitly]

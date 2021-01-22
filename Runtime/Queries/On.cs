@@ -4,41 +4,46 @@ using JetBrains.Annotations;
 
 namespace Aquiris.SQLite.Queries
 {
-    public struct GroupBy
+    public struct On
     {
         private QueryComponents _components;
 
-        internal GroupBy(QueryComponents components)
+        internal On(QueryComponents components)
         {
             _components = components;
-            _components.Add(new StringComponent(Constants.QueryComponents.GROUP_BY));
+            _components.Add(new StringComponent(Constants.QueryComponents.ON));
         }
 
         [UsedImplicitly]
-        public GroupBy Expression(string expression)
+        public On Column(string name)
         {
-            _components.Add(new StringComponent(expression));
+            _components.Add(new StringComponent(name));
             return this;
         }
 
         [UsedImplicitly]
-        public GroupBy Separator()
+        public On Equal()
         {
-            _components.Add(new StringComponent(Constants.QueryComponents.COMMA));
+            _components.Add(new StringComponent(Constants.QueryComponents.EQUAL));
             return this;
         }
 
         [UsedImplicitly]
-        public GroupBy Having()
+        public Where Where()
         {
-            _components.Add(new StringComponent(Constants.QueryComponents.HAVING));
-            return this;
+            return new Where(_components);
         }
 
         [UsedImplicitly]
         public Select Select()
         {
             return new Select(_components);
-        } 
+        }
+
+        [UsedImplicitly]
+        public Joins Join()
+        {
+            return new Joins(_components);
+        }
     }
 }

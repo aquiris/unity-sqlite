@@ -15,12 +15,18 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
-        public Window Name(string name, string definition, bool addComma)
+        public Window Name(string name, string definition)
         {
             _components.Add(new StringComponent(name));
             _components.Add(new StringComponent(Constants.QueryComponents.AS));
             _components.Add(new StringComponent(definition));
-            if (addComma) _components.Add(new StringComponent(Constants.QueryComponents.COMMA));
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Window Separator()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.COMMA));
             return this;
         }
 

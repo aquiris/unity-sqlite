@@ -43,18 +43,23 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
-        public Columns AddColumn(string name, bool addComma = true)
+        public Columns AddColumn(string name)
         {
             _components.Add(new ColumnDefinitionComponent(name));
-            if (addComma) _components.Add(new StringComponent(Constants.QueryComponents.COMMA));
             return this;
         }
 
         [UsedImplicitly]
-        public Columns DeclareColumn(string name, DataType type, bool addComma)
+        public Columns Separator()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.COMMA));
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Columns DeclareColumn(string name, DataType type)
         {
             _components.Add(new ColumnDefinitionComponent(name, type));
-            if (addComma) _components.Add(new StringComponent(Constants.QueryComponents.COMMA));
             return this;
         }
 
@@ -69,6 +74,12 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
+        public As As()
+        {
+            return new As(_components);
+        }
+
+        [UsedImplicitly]
         public Table Table()
         {
             return new Table(_components);
@@ -78,6 +89,12 @@ namespace Aquiris.SQLite.Queries
         public Insert Insert()
         {
             return new Insert(_components);
+        }
+
+        [UsedImplicitly]
+        public Select Select()
+        {
+            return new Select(_components);
         }
     }
 }

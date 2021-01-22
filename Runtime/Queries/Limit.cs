@@ -15,10 +15,16 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
-        public Limit Expression(string expression, bool addComma)
+        public Limit Expression(string expression)
         {
             _components.Add(new StringComponent(expression));
-            if (addComma) _components.Add(new StringComponent(Constants.QueryComponents.COMMA));
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Limit Separator()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.COMMA));
             return this;
         }
 

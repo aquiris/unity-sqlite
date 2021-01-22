@@ -27,7 +27,7 @@ namespace Aquiris.SQLite.Fetching
                 while (reader.Read())
                 {
                     Dictionary<string, object> row = new Dictionary<string, object>();
-                    for (int index = 0; index < reader.FieldCount; index++)
+                    for (int index = 0; index < reader.VisibleFieldCount; index++)
                     {
                         string name = reader.GetName(index);
                         object value = reader.GetValue(index);

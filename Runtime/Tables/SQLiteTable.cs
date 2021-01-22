@@ -65,7 +65,7 @@ namespace Aquiris.SQLite
             Query query = new Table(EditTableType.alter)
                 .Name(name)
                 .AddColumn()
-                .DeclareColumn(column.name, column.dataType, false)
+                .DeclareColumn(column.name, column.dataType)
                 .Table()
                 .Build();
             _runner.Run(query, database, onCompleteAction);
@@ -87,8 +87,9 @@ namespace Aquiris.SQLite
             for (int index = 0; index < _columns.Length; index++)
             {
                 SQLiteColumn column = _columns[index];
+                cols = cols.DeclareColumn(column.name, column.dataType);
                 bool addComma = index < _columns.Length - 1;
-                cols = cols.DeclareColumn(column.name, column.dataType, addComma);
+                if (addComma) cols = cols.Separator();
             }
             return cols.End().Table();
         }
