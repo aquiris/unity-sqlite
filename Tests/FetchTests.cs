@@ -24,12 +24,22 @@ namespace Aquiris.SQLite.Tests
             });
             
             const int itemCount = 1000;
-            Insert insert = new Insert();
+            Values values = new Insert()
+                .Begin(InsertMode.insert)
+                .IntoTable("TestTable")
+                .Columns().Begin()
+                .AddColumn("Column1").Separator()
+                .AddColumn("Column2").Separator()
+                .AddColumn("Column3").End()
+                .Values();
             for (int index = 0; index < itemCount; index++)
             {
-                insert = CreateInsert(insert, index);
+                values = AddValue(values, index == 0,
+                    255 * index,
+                    3.14F * index,
+                    $"Value of {index}");
             }
-            SQLiteInsert.Run(insert.Build(), _database, result =>
+            SQLiteInsert.Run(values.Insert().Build(), _database, result =>
             {
                 Assert.IsTrue(result.success);
                 Assert.AreEqual(itemCount, result.value);
@@ -67,19 +77,12 @@ namespace Aquiris.SQLite.Tests
             return new SQLiteTable("TestTable", columns);
         }
 
-        private static Insert CreateInsert(Insert insert, int index)
+        private static Values AddValue(Values values, bool first, int column1, float column2, string column3)
         {
-            return insert.Begin(InsertMode.insert)
-                .IntoTable("TestTable")
-                .Columns().Begin()
-                .AddColumn("Column1").Separator()
-                .AddColumn("Column2").Separator()
-                .AddColumn("Column3").End()
-                .Values().Begin()
-                .Bind(255 * index).Separator()
-                .Bind(3.14F * index).Separator()
-                .Bind($"Value of {index}").End()
-                .Insert().End(); 
+            return values.Begin(first)
+                .Bind(column1).Separator()
+                .Bind(column2).Separator()
+                .Bind(column3).End();
         }
     }
 }

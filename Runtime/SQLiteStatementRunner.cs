@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using System.Threading;
 using Aquiris.SQLite.Queries;
@@ -106,9 +107,34 @@ namespace Aquiris.SQLite
             for (int index = 0; index < query.bindingsCount; index++)
             {
                 KeyValuePair<string, object> binding = query.bindings[index];
-                command.Parameters.AddWithValue(binding.Key, binding.Value);
+                (DbType type, int size)  = GetDataInfo(binding.Value);
+                command.Parameters.Add(binding.Key, type, size).Value = binding.Value;
             }
             command.Prepare();
+        }
+
+        private static (DbType, int) GetDataInfo(object value)
+        {
+            if (value == null)
+            {
+                return (DbType.Object, 0);
+            }
+
+            switch (value)
+            {
+                case int _: return (DbType.Int32, sizeof(int));
+                case float _: return (DbType.Double, sizeof(float));
+                case string stringValue: return (DbType.String, stringValue.Length);
+                case byte[] bytesValue: return (DbType.Binary, bytesValue.Length);
+                default:
+                    string message = $"Unexpected type: {value.GetType()}\n" +
+                                     $"Supported types are:\n" +
+                                     $"\tint\n" +
+                                     $"\tfloat\n" +
+                                     $"\tstring\n" +
+                                     $"\tbyte[]\n";
+                    throw new ArgumentOutOfRangeException(nameof(value), value, message); 
+            }
         }
         
         private struct WorkItemInfo

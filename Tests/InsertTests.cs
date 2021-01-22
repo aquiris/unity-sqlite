@@ -47,12 +47,23 @@ namespace Aquiris.SQLite.Tests
             });
             
             const int itemCount = 1000;
-            Insert insert = new Insert();
+            Values values = new Insert()
+                .Begin(InsertMode.insert)
+                .IntoTable("TestTable")
+                .Columns().Begin()
+                .AddColumn(_intColumn.name).Separator()
+                .AddColumn(_floatColumn.name).Separator()
+                .AddColumn(_stringColumn.name).End()
+                .Values();
             for (int index = 0; index < itemCount; index++)
             {
-                insert = CreateInsert(insert, index);
+                values = AddValue(values, index == 0,
+                    255 * index,
+                    3.14F * index,
+                    $"Value of {index}");
             }
-            SQLiteInsert.Run(insert.Build(), _database, result =>
+            Query query = values.Insert().End().Build();
+            SQLiteInsert.Run(query, _database, result =>
             {
                 Assert.IsTrue(result.success);
                 Assert.AreEqual(itemCount, result.value);
@@ -99,17 +110,27 @@ namespace Aquiris.SQLite.Tests
         
         private static Insert CreateInsert(Insert insert, int index, InsertMode mode = InsertMode.insert)
         {
-            return insert.Begin(mode)
+            insert = insert.Begin(mode)
                 .IntoTable("TestTable")
                 .Columns().Begin()
                 .AddColumn(_intColumn.name).Separator()
                 .AddColumn(_floatColumn.name).Separator()
                 .AddColumn(_stringColumn.name).End()
-                .Values().Begin()
-                .Bind(255 * index).Separator()
-                .Bind(3.14F * index).Separator()
-                .Bind($"Value of {index}").End()
+                .Insert();
+            return AddValue(insert.Values(), 
+                    true, 
+                    255 * index, 
+                    3.14F * index, 
+                    $"Value of {index}")
                 .Insert().End(); 
+        }
+
+        private static Values AddValue(Values values, bool first, int column1, float column2, string column3)
+        {
+            return values.Begin(first)
+                .Bind(column1).Separator()
+                .Bind(column2).Separator()
+                .Bind(column3).End();
         }
     }
 }
