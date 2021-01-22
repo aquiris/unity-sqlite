@@ -15,10 +15,16 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
-        public GroupBy Expression(string expression, bool addComma)
+        public GroupBy Expression(string expression)
         {
             _components.Add(new StringComponent(expression));
-            if (addComma) _components.Add(new StringComponent(Constants.QueryComponents.COMMA));
+            return this;
+        }
+
+        [UsedImplicitly]
+        public GroupBy Separator()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.COMMA));
             return this;
         }
 

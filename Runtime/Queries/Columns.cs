@@ -57,10 +57,9 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
-        public Columns DeclareColumn(string name, DataType type, bool addComma)
+        public Columns DeclareColumn(string name, DataType type)
         {
             _components.Add(new ColumnDefinitionComponent(name, type));
-            if (addComma) _components.Add(new StringComponent(Constants.QueryComponents.COMMA));
             return this;
         }
 
