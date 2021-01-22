@@ -37,9 +37,9 @@ namespace Aquiris.SQLite.Tests
 
             query = new Insert(InsertMode.insert)
                 .IntoTable("Test")
-                .Columns()
+                .Columns().Begin()
                 .AddColumn("Column1").Separator()
-                .AddColumn("Column2")
+                .AddColumn("Column2").End()
                 .Values().Begin()
                 .Add("Column1", 1).Separator()
                 .Add("Column2", "EU")
@@ -51,7 +51,7 @@ namespace Aquiris.SQLite.Tests
             query.Bind("@Column21", "Meu amigo");
             queries[1] = query;
             
-            SQLiteInsert.Run(query, _database, result =>
+            SQLiteInsert.Run(queries, _database, result =>
             {
                 Assert.IsTrue(result.success);
                 WaiterSet();
