@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
 using System.Threading;
 using Aquiris.SQLite.Queries;
 using Aquiris.SQLite.Shared;
@@ -104,10 +103,10 @@ namespace Aquiris.SQLite
         private static void PrepareParameters(SqliteCommand command, Query query)
         {
             command.CommandText = query.statement;
-            for (int index = 0; index < query.bindingsCount; index++)
+            for (int index = 0; index < query.bindingCount; index++)
             {
                 KeyValuePair<string, object> binding = query.bindings[index];
-                (DbType type, int size)  = GetDataInfo(binding.Value);
+                (DbType type, int size) = GetDataInfo(binding.Value);
                 command.Parameters.Add(binding.Key, type, size).Value = binding.Value;
             }
             command.Prepare();

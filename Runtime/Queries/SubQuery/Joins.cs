@@ -1,5 +1,4 @@
-﻿using System;
-using Aquiris.SQLite.Queries.Components;
+﻿using Aquiris.SQLite.Queries.Components;
 using Aquiris.SQLite.Shared;
 using JetBrains.Annotations;
 

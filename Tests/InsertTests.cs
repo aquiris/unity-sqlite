@@ -1,5 +1,4 @@
 ﻿using Aquiris.SQLite.Queries;
-using Aquiris.SQLite.Runtime.Insertion;
 using Aquiris.SQLite.Shared;
 using Aquiris.SQLite.Tests.Shared;
 using NUnit.Framework;

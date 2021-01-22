@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Threading;
 using NUnit.Framework;
 
 namespace Aquiris.SQLite.Tests.Shared
