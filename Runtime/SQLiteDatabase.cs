@@ -56,10 +56,14 @@ namespace Aquiris.SQLite
                 _connection.Open();
                 return OpenResult.Open;
             }
+#if UNITY_EDITOR
             catch (Exception ex)
             {
-#if UNITY_EDITOR
                 Debug.LogWarning(ex);
+#else
+            catch
+            {
+                
 #endif
                 return OpenResult.Failure;
             }
@@ -75,10 +79,13 @@ namespace Aquiris.SQLite
                 _connection.Close();
                 return CloseResult.Close;
             }
+#if UNITY_EDITOR
             catch (Exception ex)
             {
-#if UNITY_EDITOR
                 Debug.LogWarning(ex);
+#else
+            catch 
+            {
 #endif
                 return CloseResult.Failure;
             }
@@ -95,10 +102,13 @@ namespace Aquiris.SQLite
                 SqliteConnection.CreateFile(databaseFilePath);
                 return CreateResult.Create;
             }
+#if UNITY_EDITOR
             catch (SqliteException ex)
             {
-#if UNITY_EDITOR
                 Debug.LogWarning(ex);                
+#else
+            catch
+            {
 #endif
                 return CreateResult.Failure;
             }
