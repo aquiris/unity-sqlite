@@ -6,8 +6,6 @@ namespace Aquiris.SQLite.Tests.Shared
 {
     public abstract class BaseTestClass
     {
-        private static AutoResetEvent _waiter = default;
-        
         protected static SQLiteDatabase _database = default;
 
         [SetUp]
@@ -24,21 +22,6 @@ namespace Aquiris.SQLite.Tests.Shared
             
             if (!Directory.Exists(Constants.databaseParentPath)) return;
             Directory.Delete(Constants.databaseParentPath, true);
-        }
-
-        protected static void CreateWaiter()
-        {
-            _waiter = new AutoResetEvent(false);
-        }
-
-        protected static void WaiterSet()
-        {
-            _waiter.Set();
-        }
-        
-        protected static void WaitOne()
-        {
-            Assert.IsTrue(_waiter.WaitOne(Constants.waitTimeOut));
         }
 
         protected static void CreateDatabase()

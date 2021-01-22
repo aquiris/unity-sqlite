@@ -8,12 +8,13 @@ namespace Aquiris.SQLite.Threading
     {
         private static ThreadSafety _shared = default;
         private static readonly ConcurrentQueue<Action> _concurrentQueue = new ConcurrentQueue<Action>();
-        private static bool _isPlaying;
+
+        internal static bool isPlaying { get; private set; }
 
         public static void Initialize()
         {
-            _isPlaying = Application.isPlaying;
-            if (!_isPlaying) return;
+            isPlaying = Application.isPlaying;
+            if (!isPlaying) return;
             
             if (_shared) return;
             _shared = new GameObject("SQLiteThreadSafety").AddComponent<ThreadSafety>();
@@ -22,7 +23,7 @@ namespace Aquiris.SQLite.Threading
         
         public static void RunOnMainThread(Action action)
         {
-            if (_isPlaying)
+            if (isPlaying)
             {
                 _concurrentQueue.Enqueue(action);
                 return;

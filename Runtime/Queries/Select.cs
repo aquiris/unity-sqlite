@@ -21,6 +21,13 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
+        public Select End()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.SEMICOLON));
+            return this;
+        }
+
+        [UsedImplicitly]
         public Select Distinct()
         {
             _components.Add(new StringComponent(Constants.QueryComponents.DISTINCT));

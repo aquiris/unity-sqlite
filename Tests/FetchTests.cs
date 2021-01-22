@@ -14,8 +14,6 @@ namespace Aquiris.SQLite.Tests
         [Test]
         public void TestSelectData()
         {
-            CreateWaiter();
-            
             CreateDatabase();
             _database.Open();
 
@@ -23,32 +21,19 @@ namespace Aquiris.SQLite.Tests
             table.Create(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                WaiterSet();
             });
             
-            WaitOne();
-
-            SQLiteInsert insert = new SQLiteInsert(table);
-            
-            const int itemCount = 10000;
-            SQLiteInsertData[] collection = new SQLiteInsertData[itemCount];
-            for (int index = 0; index < collection.Length; index++)
+            const int itemCount = 1000;
+            Insert insert = new Insert();
+            for (int index = 0; index < itemCount; index++)
             {
-                SQLiteInsertData data = new SQLiteInsertData(table);
-                data.Add("Column1", 255 * index);
-                data.Add("Column2", 3.14F * index);
-                data.Add("Column3", $"Value of {index}");
-                collection[index] = data;
+                insert = CreateInsert(insert, index);
             }
-            
-            insert.Insert(InsertMode.insert, collection, _database, result =>
+            SQLiteInsert.Run(insert.Build(), _database, result =>
             {
                 Assert.IsTrue(result.success);
                 Assert.AreEqual(itemCount, result.value);
-                WaiterSet();
             });
-            
-            WaitOne();
             
             // now begins the test
 
@@ -69,11 +54,7 @@ namespace Aquiris.SQLite.Tests
                 Assert.IsTrue(results[0].ContainsKey("Column1"));
                 Assert.IsTrue(results[0].ContainsKey("Column2"));
                 Assert.IsTrue(results[0].ContainsKey("Column3"));
-                
-                WaiterSet();
             });
-            
-            WaitOne();
         }
         
         private static SQLiteTable GetTable()
@@ -84,6 +65,21 @@ namespace Aquiris.SQLite.Tests
                 new SQLiteColumn("Column3", DataType.Text),
             };
             return new SQLiteTable("TestTable", columns);
+        }
+
+        private static Insert CreateInsert(Insert insert, int index)
+        {
+            return insert.Begin(InsertMode.insert)
+                .IntoTable("TestTable")
+                .Columns().Begin()
+                .AddColumn("Column1").Separator()
+                .AddColumn("Column2").Separator()
+                .AddColumn("Column3").End()
+                .Values().Begin()
+                .Bind(255 * index).Separator()
+                .Bind(3.14F * index).Separator()
+                .Bind($"Value of {index}").End()
+                .Insert().End(); 
         }
     }
 }

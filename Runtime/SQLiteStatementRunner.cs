@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using Aquiris.SQLite.Queries;
 using Aquiris.SQLite.Shared;
@@ -28,7 +29,8 @@ namespace Aquiris.SQLite
                 query = query,
                 queriesCount = 1,
             };
-            ThreadPool.QueueUserWorkItem(ThreadPoolRunner, state);
+            if (ThreadSafety.isPlaying) ThreadPool.QueueUserWorkItem(ThreadPoolRunner, state);
+            else ThreadPoolRunner(state);
         }
 
         protected void Run(Query[] queries, int count, SQLiteDatabase database)
@@ -39,7 +41,8 @@ namespace Aquiris.SQLite
                 queries = queries,
                 queriesCount = count,
             };
-            ThreadPool.QueueUserWorkItem(ThreadPoolRunner, state);
+            if (ThreadSafety.isPlaying) ThreadPool.QueueUserWorkItem(ThreadPoolRunner, state);
+            else ThreadPoolRunner(state);
         }
 
         protected abstract object ExecuteThreaded(SqliteCommand command); 
@@ -55,17 +58,9 @@ namespace Aquiris.SQLite
                 using (SqliteTransaction transaction = info.database.BeginTransaction())
                 using (SqliteCommand command = info.database.CreateCommand())
                 {
-                    if (info.queriesCount == 1)
-                    {
-                        ExecuteOne(command, transaction, info.query);
-                    }
-                    else
-                    {
-                        for (int index = 0; index < info.queriesCount; index++)
-                        {
-                            ExecuteOne(command, transaction, info.queries[index]);
-                        }
-                    }
+                    command.Transaction = transaction;
+                    if (info.queriesCount == 1) ExecuteOnce(command, info.query);
+                    else ExecuteMany(command, info.queries, info.queriesCount);
                     transaction.Commit();
                 }
             }
@@ -75,10 +70,8 @@ namespace Aquiris.SQLite
 
         private void Completed() => Completed(_result);
 
-        private void ExecuteOne(SqliteCommand command, SqliteTransaction transaction, Query query)
+        private void ExecuteOnce(SqliteCommand command, Query query)
         {
-            command.Transaction = transaction;
-            command.CommandText = query.statement;
             PrepareParameters(command, query);
             try
             {
@@ -90,7 +83,7 @@ namespace Aquiris.SQLite
             catch (SqliteException ex)
             {
 #if UNITY_EDITOR
-                Debug.LogWarning($"Query: {query.statement}{Constants.newLine}{ex}");
+                Debug.LogWarning($"Query: {command.CommandText}{Constants.newLine}{ex}");
 #endif
                 _result.success = false;
                 _result.errorCode = ex.ErrorCode;
@@ -99,8 +92,17 @@ namespace Aquiris.SQLite
             }
         }
 
+        private void ExecuteMany(SqliteCommand command, Query[] queries, int count)
+        {
+            for (int index = 0; index < count; index++)
+            {
+                ExecuteOnce(command, queries[index]);
+            }
+        }
+
         private static void PrepareParameters(SqliteCommand command, Query query)
         {
+            command.CommandText = query.statement;
             for (int index = 0; index < query.bindingsCount; index++)
             {
                 KeyValuePair<string, object> binding = query.bindings[index];
@@ -108,7 +110,7 @@ namespace Aquiris.SQLite
             }
             command.Prepare();
         }
-
+        
         private struct WorkItemInfo
         {
             public SQLiteDatabase database;
