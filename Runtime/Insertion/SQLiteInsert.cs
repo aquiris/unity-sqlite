@@ -57,8 +57,9 @@ namespace Aquiris.SQLite.Runtime.Insertion
             for (int index = 0; index < data.dataCount; index++)
             {
                 KeyValuePair<SQLiteColumn, object> pair = data.data[index];
+                cols = cols.AddColumn(pair.Key.name);
                 bool addComma = index < data.dataCount - 1;
-                cols = cols.AddColumn(pair.Key.name, addComma);
+                if (addComma) cols = cols.Separator();
             }
             return cols.End().Insert();
         }
@@ -69,8 +70,9 @@ namespace Aquiris.SQLite.Runtime.Insertion
             for (int index = 0; index < data.dataCount; index++)
             {
                 KeyValuePair<SQLiteColumn, object> pair = data.data[index];
+                values = values.Add(pair.Key.name, pair.Value);
                 bool addComma = index < data.dataCount - 1;
-                values = values.Add(pair.Key.name, pair.Value, addComma);
+                if (addComma) values = values.Separator();
             }
             return values.End().Insert();
         }

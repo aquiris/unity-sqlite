@@ -115,6 +115,12 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
+        public Joins Join()
+        {
+            return new Joins(_components);
+        }
+
+        [UsedImplicitly]
         public Query Build() => _components.Build();
     }
 }

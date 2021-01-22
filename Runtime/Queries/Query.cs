@@ -6,23 +6,23 @@ namespace Aquiris.SQLite.Queries
 {
     public struct Query
     {
-        private static readonly KeyValuePair<string, object>[] _bindingsBuffer = new KeyValuePair<string, object>[Constants.maxNumberOfBindings]; 
-
         public string statement;
-        
+
+        public KeyValuePair<string, object>[] bindings { get; private set; }
         public int bindingsCount { get; private set; }
-        public IReadOnlyList<KeyValuePair<string, object>> bindings => _bindingsBuffer;
 
         public Query(string statement)
         {
             this.statement = statement;
             bindingsCount = 0;
+            bindings = new KeyValuePair<string, object>[Constants.maxNumberOfBindings];
         }
 
         [UsedImplicitly]
         public void Add(KeyValuePair<string, object> binding)
         {
-            _bindingsBuffer[bindingsCount] = binding;
+            if (bindings == null) bindings = new KeyValuePair<string, object>[Constants.maxNumberOfBindings];
+            bindings[bindingsCount] = binding;
             bindingsCount += 1;
         }
 

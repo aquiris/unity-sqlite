@@ -39,13 +39,19 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
-        public Values Add(string columnName, object value, bool addComma)
+        public Values Add(string columnName, object value)
         {
             BindingComponent binding = new BindingComponent(columnName, _columnCount);
             _components.Add(binding);
             _components.AddBinding(binding.value, value);
-            if (addComma) _components.Add(new StringComponent(Constants.QueryComponents.COMMA));
             _columnCount += 1;
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Values Separator()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.COMMA));
             return this;
         }
 

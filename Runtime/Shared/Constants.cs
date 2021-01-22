@@ -74,6 +74,11 @@ namespace Aquiris.SQLite.Shared
             public const string OFFSET = "OFFSET";
             public const string CREATE_VIEW = "CREATE VIEW";
             public const string DROP_VIEW = "DROP VIEW";
+            public const string LEFT = "LEFT";
+            public const string INNER = "INNER";
+            public const string OUTER = "OUTER";
+            public const string JOIN = "JOIN";
+            public const string ON = "ON";
 
             #region Operators
 

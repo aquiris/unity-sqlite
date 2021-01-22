@@ -45,7 +45,7 @@ namespace Aquiris.SQLite.Tests
                 .Begin()
                 .Columns()
                 .Begin()
-                .AddColumn("Column1", false)
+                .AddColumn("Column1")
                 .End()
                 .Table()
                 .Build();
@@ -105,9 +105,9 @@ namespace Aquiris.SQLite.Tests
 		        .Begin()
 		        .Columns()
 		        .Begin()
-		        .AddColumn("moment", true)
-		        .AddColumn("type", true)
-		        .AddColumn("momentSubject", false)
+		        .AddColumn("moment").Separator()
+		        .AddColumn("type").Separator()
+		        .AddColumn("momentSubject")
 		        .End()
 		        .Table()
 		        .Build();
