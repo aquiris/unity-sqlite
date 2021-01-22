@@ -25,10 +25,10 @@ namespace Aquiris.SQLite.Queries
         {
             _components = components;
         }
-
-        public Table(TableMode mode, bool isView = false)
+        
+        [UsedImplicitly]
+        public Table Begin(TableMode mode, bool isView = false)
         {
-            _components = new QueryComponents();
             switch (mode)
             {
                 case TableMode.create:
@@ -48,6 +48,14 @@ namespace Aquiris.SQLite.Queries
                 default:
                     throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
             }
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Table End()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.SEMICOLON));
+            return this;
         }
         
         [UsedImplicitly]

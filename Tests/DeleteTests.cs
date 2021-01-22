@@ -14,12 +14,11 @@ namespace Aquiris.SQLite.Tests
         [Test]
         public void TestDeleteRow()
         {
-            CreateWaiter();
-            
             CreateDatabase();
             _database.Open();
 
-            Query query = new Table(TableMode.create)
+            Query query = new Table()
+                .Begin(TableMode.create)
                 .Name("Test")
                 .Columns().Begin()
                 .DeclareColumn("Column1", DataType.Integer).Separator()
@@ -30,38 +29,37 @@ namespace Aquiris.SQLite.Tests
             SQLiteTable.Run(query, _database, result =>
             {
                 Assert.IsTrue(result.success);
-                WaiterSet();
             });
             
-            WaitOne();
-
-            query = new Insert(InsertMode.insert)
+            Query[] queries = new Query[2];
+            queries[0] = new Insert()
+                .Begin(InsertMode.insert)
                 .IntoTable("Test")
                 .Columns().Begin()
                 .AddColumn("Column1").Separator()
                 .AddColumn("Column2").End()
                 .Values().Begin()
-                .Add("Column1", 1).Separator()
-                .Add("Column2", "EU")
-                .End()
+                .Bind(1).Separator()
+                .Bind("EU").End()
                 .Insert().Build();
 
-            Query[] queries = new Query[2];
-            queries[0] = query;
-            
-            query = new Query(query.statement);
-            query.Bind("@Column10", 2);
-            query.Bind("@Column21", "Meu amigo");
-            queries[1] = query;
+
+            queries[1] = new Insert()
+                .Begin(InsertMode.insert)
+                .IntoTable("Test")
+                .Columns().Begin()
+                .AddColumn("Column1").Separator()
+                .AddColumn("Column2").End()
+                .Values().Begin()
+                .Bind(2).Separator()
+                .Bind("Meu amigo").End()
+                .Insert().Build();
             
             SQLiteInsert.Run(queries, _database, result =>
             {
                 Assert.IsTrue(result.success);
-                WaiterSet();
             });
             
-            WaitOne();
-
             query = new Delete()
                 .Begin()
                 .From()
@@ -69,7 +67,7 @@ namespace Aquiris.SQLite.Tests
                 .Where()
                 .Column("Column2")
                 .Equal()
-                .Binding("Column2", "Meu amigo")
+                .Binding("Meu amigo")
                 .Delete()
                 .Build();
 
@@ -77,12 +75,8 @@ namespace Aquiris.SQLite.Tests
             {
                 Assert.IsTrue(result.success);
                 Assert.AreEqual(1, result.value);
-                
-                WaiterSet();
             });
             
-            WaitOne();
-
             query = new Select()
                 .Begin()
                 .All()
@@ -98,11 +92,7 @@ namespace Aquiris.SQLite.Tests
                 
                 Assert.IsNotNull(results);
                 Assert.AreEqual(1, results.Count);
-                
-                WaiterSet();
             });
-            
-            WaitOne();
         }
     }
 }

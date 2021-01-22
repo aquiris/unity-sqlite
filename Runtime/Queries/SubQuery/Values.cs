@@ -7,18 +7,15 @@ namespace Aquiris.SQLite.Queries
     public struct Values
     {
         private QueryComponents _components;
-        private int _columnCount;
-        
+
         internal Values(QueryComponents components)
         {
             _components = components;
-            _columnCount = 0;
         }
 
         internal Values(Values other)
         {
             _components = other._components;
-            _columnCount = other._columnCount;
         }
 
         [UsedImplicitly]
@@ -39,12 +36,11 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
-        public Values Add(string columnName, object value)
+        public Values Bind(object value)
         {
-            BindingComponent binding = new BindingComponent(columnName, _columnCount);
+            BindingComponent binding = BindingComponent.Binding();
             _components.Add(binding);
             _components.AddBinding(binding.value, value);
-            _columnCount += 1;
             return this;
         }
 

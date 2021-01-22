@@ -2,6 +2,7 @@
 using System.Text;
 using Aquiris.SQLite.Queries.Components;
 using Aquiris.SQLite.Shared;
+using JetBrains.Annotations;
 
 namespace Aquiris.SQLite.Queries
 {
@@ -12,33 +13,39 @@ namespace Aquiris.SQLite.Queries
         private Query _query;
         private int _count;
 
+        [UsedImplicitly]
         public QueryComponents(QueryComponents other)
         {
             _query = other._query;
             _count = other._count;
         }
 
+        [UsedImplicitly]
         public void Add(IQueryComponent component)
         {
             _components[_count] = component;
             _count += 1;
         }
 
+        [UsedImplicitly]
         public void AddBinding(string key, object value)
         {
             _query.Bind(key, value);
         }
 
+        [UsedImplicitly]
         public void AddBinding(KeyValuePair<string, object> binding)
         {
             _query.Bind(binding);
         }
 
+        [UsedImplicitly]
         public void AddBinding(KeyValuePair<string, object>[] bindings, int count)
         {
             _query.Bind(bindings, count);
         }
 
+        [UsedImplicitly]
         public Query Build()
         {
             _builder.Clear();
@@ -52,7 +59,6 @@ namespace Aquiris.SQLite.Queries
                     _builder.Append(" ");
                 }
             }
-            _builder.Append(";");
             _query.statement = _builder.ToString();
             return _query;
         }
