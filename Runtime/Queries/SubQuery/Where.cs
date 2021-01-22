@@ -7,13 +7,11 @@ namespace Aquiris.SQLite.Queries
     public struct Where
     {
         private QueryComponents _components;
-        private int _paramCount;
 
         internal Where(QueryComponents components)
         {
             _components = components;
             _components.Add(new StringComponent(Constants.QueryComponents.WHERE));
-            _paramCount = 0;
         }
 
         [UsedImplicitly]
@@ -24,12 +22,11 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
-        public Where Binding(string paramName, object value)
+        public Where Binding(object value)
         {
-            BindingComponent binding = new BindingComponent(paramName, _paramCount);
+            BindingComponent binding = BindingComponent.Binding();
             _components.AddBinding(binding.value, value);
             _components.Add(binding);
-            _paramCount += 1;
             return this;
         }
 

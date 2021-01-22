@@ -24,7 +24,8 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void Create(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Table table = new Table(TableMode.create)
+            Table table = new Table()
+                .Begin(TableMode.create)
                 .Name(name);
             Query query = DeclareColumns(table).Build();
             _runner.Run(query, database, onCompleteAction);
@@ -33,7 +34,8 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void CreateIfNotExists(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Table table = new Table(TableMode.create)
+            Table table = new Table()
+                .Begin(TableMode.create)
                 .IfNotExists()
                 .Name(name);
             Query query = DeclareColumns(table).Build();
@@ -43,18 +45,22 @@ namespace Aquiris.SQLite
         [UsedImplicitly]
         public void Rename(string newName, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Query query = new Table(TableMode.alter)
+            Query query = new Table()
+                .Begin(TableMode.alter)
                 .Name(name)
                 .RenameTo(newName)
                 .Build();
-            _runner.Run(query, database, onCompleteAction);
+            
             name = newName;
+            
+            _runner.Run(query, database, onCompleteAction);
         }
 
         [UsedImplicitly]
         public void Drop(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Query query = new Table(TableMode.drop)
+            Query query = new Table()
+                .Begin(TableMode.drop)
                 .Name(name)
                 .Build();
             _runner.Run(query, database, onCompleteAction);
@@ -62,17 +68,19 @@ namespace Aquiris.SQLite
 
         public void AddColumn(SQLiteDatabase database, SQLiteColumn column, Action<QueryResult> onCompleteAction)
         {
-            Query query = new Table(TableMode.alter)
+            Query query = new Table()
+                .Begin(TableMode.alter)
                 .Name(name)
                 .AddColumn()
                 .DeclareColumn(column.name, column.dataType)
                 .Table()
                 .Build();
-            _runner.Run(query, database, onCompleteAction);
             
             int previousLength = _columns.Length;
             Array.Resize(ref _columns, previousLength + 1);
             _columns[previousLength] = column;
+            
+            _runner.Run(query, database, onCompleteAction);
         }
 
         [UsedImplicitly]
