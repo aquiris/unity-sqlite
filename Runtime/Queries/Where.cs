@@ -195,5 +195,11 @@ namespace Aquiris.SQLite.Queries
         {
             return new GroupBy(_components);
         }
+
+        [UsedImplicitly]
+        public Delete Delete()
+        {
+            return new Delete(_components);
+        }
     }
 }

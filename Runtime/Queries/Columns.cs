@@ -96,5 +96,11 @@ namespace Aquiris.SQLite.Queries
         {
             return new Select(_components);
         }
+
+        [UsedImplicitly]
+        public Values Values()
+        {
+            return new Values(_components);
+        }
     }
 }

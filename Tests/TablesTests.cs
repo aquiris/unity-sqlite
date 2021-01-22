@@ -24,7 +24,7 @@ namespace Aquiris.SQLite.Tests
                 Assert.AreEqual(SQLiteErrorCode.Ok, result.errorCode);
                 Assert.IsNull(result.errorMessage);
                 Assert.IsNull(result.value);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -42,7 +42,7 @@ namespace Aquiris.SQLite.Tests
             table.Create(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -53,7 +53,7 @@ namespace Aquiris.SQLite.Tests
                 Assert.IsNotNull(result.errorMessage);
                 Assert.IsNotEmpty(result.errorMessage);
                 Assert.IsNull(result.value);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -71,7 +71,7 @@ namespace Aquiris.SQLite.Tests
             table.CreateIfNotExists(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -79,7 +79,7 @@ namespace Aquiris.SQLite.Tests
             table.CreateIfNotExists(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -97,7 +97,7 @@ namespace Aquiris.SQLite.Tests
             table.Create(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -108,7 +108,7 @@ namespace Aquiris.SQLite.Tests
                 // here we're being positive hoping that the rename has happened
                 // successfully in the query execution
                 Assert.AreEqual("OtherTable", table.name);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -126,7 +126,7 @@ namespace Aquiris.SQLite.Tests
             table.Create(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -134,7 +134,7 @@ namespace Aquiris.SQLite.Tests
             table.Drop(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -153,7 +153,7 @@ namespace Aquiris.SQLite.Tests
                 Assert.IsFalse(result.success);
                 Assert.IsNotNull(result.errorMessage);
                 Assert.IsNotEmpty(result.errorMessage);
-                _waiter.Set();
+                WaiterSet();
             });
 
             WaitOne();
@@ -171,7 +171,7 @@ namespace Aquiris.SQLite.Tests
             table.Create(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -182,7 +182,7 @@ namespace Aquiris.SQLite.Tests
                 Assert.IsTrue(result.success);
                 // here we're hoping that the query execution was successful 
                 Assert.AreEqual(column, table.columns[table.columns.Length - 1]);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -200,7 +200,7 @@ namespace Aquiris.SQLite.Tests
             table.Create(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -211,7 +211,7 @@ namespace Aquiris.SQLite.Tests
                 Assert.IsTrue(result.success);
                 // here we're hoping that the query execution was successful
                 Assert.AreEqual("Column3_4", column.name);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();

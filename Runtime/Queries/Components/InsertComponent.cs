@@ -7,33 +7,33 @@ namespace Aquiris.SQLite.Queries.Components
     {
         public string value { get; }
         
-        public InsertComponent(InsertType type)
+        public InsertComponent(InsertMode mode)
         {
-            switch (type)
+            switch (mode)
             {
-                case InsertType.insert:
+                case InsertMode.insert:
                     value = Constants.QueryComponents.INSERT;
                     break;
-                case InsertType.insertOrAbort:
+                case InsertMode.insertOrAbort:
                     value = Constants.QueryComponents.INSERT_OR_ABORT;
                     break;
-                case InsertType.insertOrFail:
+                case InsertMode.insertOrFail:
                     value = Constants.QueryComponents.INSERT_OR_FAIL;
                     break;
-                case InsertType.insertOrIgnore:
+                case InsertMode.insertOrIgnore:
                     value = Constants.QueryComponents.INSERT_OR_IGNORE;
                     break;
-                case InsertType.insertOrReplace:
+                case InsertMode.insertOrReplace:
                     value = Constants.QueryComponents.INSERT_OR_REPLACE;
                     break;
-                case InsertType.insertOrRollback:
+                case InsertMode.insertOrRollback:
                     value = Constants.QueryComponents.INSERT_OR_ROLLBACK;
                     break;
-                case InsertType.replace:
+                case InsertMode.replace:
                     value = Constants.QueryComponents.REPLACE;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                    throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
             }
         }
     }

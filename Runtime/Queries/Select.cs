@@ -42,7 +42,7 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
-        public Select TableName(string tableName)
+        public Select Table(string tableName)
         {
             _components.Add(new StringComponent(tableName));
             return this;

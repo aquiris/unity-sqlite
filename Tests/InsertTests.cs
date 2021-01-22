@@ -26,7 +26,7 @@ namespace Aquiris.SQLite.Tests
             table.Create(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -37,11 +37,11 @@ namespace Aquiris.SQLite.Tests
             data.Add(_intColumn, 255);
             data.Add(_floatColumn, 3.14F);
             data.Add(_stringColumn, "This is a string");
-            insert.Insert(InsertType.insert, data, _database, result =>
+            insert.Insert(InsertMode.insert, data, _database, result =>
             {
                 Assert.IsTrue(result.success);
                 Assert.AreEqual(1, result.value); // number of added rows
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -59,7 +59,7 @@ namespace Aquiris.SQLite.Tests
             table.Create(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -77,11 +77,11 @@ namespace Aquiris.SQLite.Tests
                 collection[index] = data;
             }
             
-            insert.Insert(InsertType.insert, collection, _database, result =>
+            insert.Insert(InsertMode.insert, collection, _database, result =>
             {
                 Assert.IsTrue(result.success);
                 Assert.AreEqual(itemCount, result.value);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -99,7 +99,7 @@ namespace Aquiris.SQLite.Tests
             table.Create(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -107,18 +107,18 @@ namespace Aquiris.SQLite.Tests
             SQLiteInsert insert = new SQLiteInsert(table);
             SQLiteInsertData data = new SQLiteInsertData(table);
             data.Add(_intColumn, 10);
-            insert.Insert(InsertType.insert, data, _database, result =>
+            insert.Insert(InsertMode.insert, data, _database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
             
-            insert.Insert(InsertType.insertOrAbort, data, _database, result =>
+            insert.Insert(InsertMode.insertOrAbort, data, _database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();

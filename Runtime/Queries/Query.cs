@@ -19,23 +19,36 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
-        public void Add(KeyValuePair<string, object> binding)
+        public void Bind(KeyValuePair<string, object> binding)
         {
             if (bindings == null) bindings = new KeyValuePair<string, object>[Constants.maxNumberOfBindings];
-            bindings[bindingsCount] = binding;
-            bindingsCount += 1;
+            int bindingIndex = bindingsCount;
+            if (!Find(binding.Key, ref bindingIndex))
+                bindingsCount += 1;
+            bindings[bindingIndex] = binding;
         }
 
         [UsedImplicitly]
-        public void Add(string column, object value) => Add(new KeyValuePair<string, object>(column, value));
+        public void Bind(string column, object value) => Bind(new KeyValuePair<string, object>(column, value));
 
         [UsedImplicitly]
-        public void Add(KeyValuePair<string, object>[] collection, int count)
+        public void Bind(KeyValuePair<string, object>[] collection, int count)
         {
             for (int index = 0; index < count; index++)
             {
-                Add(collection[count]);
+                Bind(collection[count]);
             }
+        }
+
+        private bool Find(string binding, ref int existingIndex)
+        {
+            for (int index = 0; index < bindingsCount; index++)
+            {
+                if (!string.Equals(binding, bindings[index].Key)) continue;
+                existingIndex = index;
+                return true;
+            }
+            return false;
         }
     }
 }

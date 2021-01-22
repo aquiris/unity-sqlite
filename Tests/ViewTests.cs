@@ -20,7 +20,7 @@ namespace Aquiris.SQLite.Tests
             table.Create(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -28,16 +28,16 @@ namespace Aquiris.SQLite.Tests
             SQLiteInsertData data = new SQLiteInsertData(table);
             data.Add("Column1", 10);
             SQLiteInsert insert = new SQLiteInsert(table);
-            insert.Insert(InsertType.insert, data, _database, result =>
+            insert.Insert(InsertMode.insert, data, _database, result =>
             {
                 Assert.IsTrue(result.success);
                 Assert.AreEqual(1, result.value);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
 
-            Query query = new Table(EditTableType.create, true)
+            Query query = new Table(TableMode.create, true)
                 .IfNotExists()
                 .Name("MyView")
                 .As()
@@ -52,7 +52,7 @@ namespace Aquiris.SQLite.Tests
             SQLiteTable.Run(query, _database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -65,7 +65,7 @@ namespace Aquiris.SQLite.Tests
 	        CreateDatabase();
 	        _database.Open();
 
-	        Table table = new Table(EditTableType.create)
+	        Table table = new Table(TableMode.create)
 		        .Name("BigTable")
 		        .Columns()
 		        .Begin()
@@ -93,12 +93,12 @@ namespace Aquiris.SQLite.Tests
 	        SQLiteTable.Run(query, _database, result =>
 	        {
 				Assert.IsTrue(result.success);
-				_waiter.Set();
+				WaiterSet();
 	        });
 	        
 	        WaitOne();
 
-	        query = new Table(EditTableType.create, true)
+	        query = new Table(TableMode.create, true)
 		        .Name("BigView")
 		        .As()
 		        .Select()
@@ -114,7 +114,7 @@ namespace Aquiris.SQLite.Tests
 	        SQLiteTable.Run(query, _database, result =>
 	        {
 		        Assert.IsTrue(result.success);
-		        _waiter.Set();
+		        WaiterSet();
 	        });
 	        
 	        WaitOne();

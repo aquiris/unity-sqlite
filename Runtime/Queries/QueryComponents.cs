@@ -26,17 +26,17 @@ namespace Aquiris.SQLite.Queries
 
         public void AddBinding(string key, object value)
         {
-            _query.Add(key, value);
+            _query.Bind(key, value);
         }
 
         public void AddBinding(KeyValuePair<string, object> binding)
         {
-            _query.Add(binding);
+            _query.Bind(binding);
         }
 
         public void AddBinding(KeyValuePair<string, object>[] bindings, int count)
         {
-            _query.Add(bindings, count);
+            _query.Bind(bindings, count);
         }
 
         public Query Build()
