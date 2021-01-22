@@ -20,19 +20,19 @@ namespace Aquiris.SQLite.Runtime.Insertion
         }
         
         [UsedImplicitly]
-        public void Insert(InsertType type, SQLiteInsertData data, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
+        public void Insert(InsertMode mode, SQLiteInsertData data, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
-            Insert insert = new Insert(type).IntoTable(_table.name);
+            Insert insert = new Insert(mode).IntoTable(_table.name);
             Query query = DoValues(DoColumns(insert, data), data).Build();
             _runner.Run(query, database, onCompleteAction);
         }
 
-        public void Insert(InsertType type, SQLiteInsertData[] collection, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
+        public void Insert(InsertMode mode, SQLiteInsertData[] collection, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
             for (int index = 0; index < collection.Length; index++)
             {
                 SQLiteInsertData data = collection[index];
-                Insert insert = new Insert(type).IntoTable(_table.name);
+                Insert insert = new Insert(mode).IntoTable(_table.name);
                 Query query = DoValues(DoColumns(insert, data), data).Build();
                 _queriesBuffer[index] = query;
             }

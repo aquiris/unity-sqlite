@@ -29,6 +29,7 @@ namespace Aquiris.SQLite.Shared
             public const string IF_EXISTS = "IF EXISTS";
             public const string IF_NOT_EXISTS = "IF NOT EXISTS";
             public const string AS = "AS";
+            public const string WITH = "WITH";
             public const string WITHOUT = "WITHOUT";
             public const string ROWID = "ROWID";
             public const string WITHOUT_ROWID = "WITHOUT ROWID";
@@ -36,6 +37,7 @@ namespace Aquiris.SQLite.Shared
             public const string INTO = "INTO";
             public const string OR = "OR";
             public const string REPLACE = "REPLACE";
+            public const string RECURSIVE = "RECURSIVE";
             public const string INSERT = "INSERT";
             public const string ABORT = "ABORT";
             public const string FAIL = "FAIL";
@@ -79,6 +81,8 @@ namespace Aquiris.SQLite.Shared
             public const string OUTER = "OUTER";
             public const string JOIN = "JOIN";
             public const string ON = "ON";
+            public const string DELETE = "DELETE";
+
 
             #region Operators
 

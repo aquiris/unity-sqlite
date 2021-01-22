@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 namespace Aquiris.SQLite.Queries
 {
-    public enum EditTableType
+    public enum TableMode
     {
         create,
         alter,
@@ -26,27 +26,27 @@ namespace Aquiris.SQLite.Queries
             _components = components;
         }
 
-        public Table(EditTableType type, bool isView = false)
+        public Table(TableMode mode, bool isView = false)
         {
             _components = new QueryComponents();
-            switch (type)
+            switch (mode)
             {
-                case EditTableType.create:
+                case TableMode.create:
                     StringComponent createTable = new StringComponent(Constants.QueryComponents.CREATE_TABLE);
                     StringComponent createView = new StringComponent(Constants.QueryComponents.CREATE_VIEW);
                     _components.Add(isView ? createView : createTable);
                     break;
-                case EditTableType.alter:
+                case TableMode.alter:
                     if (isView) throw new NotSupportedException("Sqlite error: Cannot alter a view");
                     _components.Add(new StringComponent(Constants.QueryComponents.ALTER_TABLE));
                     break;
-                case EditTableType.drop:
+                case TableMode.drop:
                     StringComponent dropTable = new StringComponent(Constants.QueryComponents.DROP_TABLE);
                     StringComponent dropView = new StringComponent(Constants.QueryComponents.DROP_VIEW);
                     _components.Add(isView ? dropView : dropTable);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                    throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
             }
         }
         

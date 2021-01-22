@@ -6,9 +6,10 @@ namespace Aquiris.SQLite.Tests.Shared
 {
     public abstract class BaseTestClass
     {
-        protected static SQLiteDatabase _database = default;
-        protected static AutoResetEvent _waiter = default;
+        private static AutoResetEvent _waiter = default;
         
+        protected static SQLiteDatabase _database = default;
+
         [SetUp]
         public virtual void SetUp()
         {
@@ -28,6 +29,11 @@ namespace Aquiris.SQLite.Tests.Shared
         protected static void CreateWaiter()
         {
             _waiter = new AutoResetEvent(false);
+        }
+
+        protected static void WaiterSet()
+        {
+            _waiter.Set();
         }
         
         protected static void WaitOne()

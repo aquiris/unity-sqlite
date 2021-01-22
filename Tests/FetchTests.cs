@@ -23,7 +23,7 @@ namespace Aquiris.SQLite.Tests
             table.Create(_database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -41,11 +41,11 @@ namespace Aquiris.SQLite.Tests
                 collection[index] = data;
             }
             
-            insert.Insert(InsertType.insert, collection, _database, result =>
+            insert.Insert(InsertMode.insert, collection, _database, result =>
             {
                 Assert.IsTrue(result.success);
                 Assert.AreEqual(itemCount, result.value);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -56,7 +56,7 @@ namespace Aquiris.SQLite.Tests
                 .Begin()
                 .All()
                 .From()
-                .TableName("TestTable")
+                .Table("TestTable")
                 .Build();
 
             SQLiteFetch.Run(null, query, _database, result =>
@@ -70,7 +70,7 @@ namespace Aquiris.SQLite.Tests
                 Assert.IsTrue(results[0].ContainsKey("Column2"));
                 Assert.IsTrue(results[0].ContainsKey("Column3"));
                 
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();

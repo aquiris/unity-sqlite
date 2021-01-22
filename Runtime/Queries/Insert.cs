@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace Aquiris.SQLite.Queries
 {
-    public enum InsertType
+    public enum InsertMode
     {
         insert,
         insertOrAbort,
@@ -30,10 +30,10 @@ namespace Aquiris.SQLite.Queries
         }
         
         [UsedImplicitly]
-        public Insert(InsertType type)
+        public Insert(InsertMode mode)
         {
             _components = new QueryComponents();
-            _components.Add(new InsertComponent(type));
+            _components.Add(new InsertComponent(mode));
         }
 
         [UsedImplicitly]
@@ -48,6 +48,13 @@ namespace Aquiris.SQLite.Queries
         public As As()
         {
             return new As(_components);
+        }
+        
+        [UsedImplicitly]
+        public Insert DefaultValues()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.DEFAULT_VALUES));
+            return this;
         }
 
         [UsedImplicitly]
@@ -66,13 +73,6 @@ namespace Aquiris.SQLite.Queries
         public Select Select()
         {
             return new Select(_components);
-        }
-
-        [UsedImplicitly]
-        public Insert DefaultValues()
-        {
-            _components.Add(new StringComponent(Constants.QueryComponents.DEFAULT_VALUES));
-            return this;
         }
 
         [UsedImplicitly]

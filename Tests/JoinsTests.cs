@@ -19,7 +19,7 @@ namespace Aquiris.SQLite.Tests
             CreateDatabase();
             _database.Open();
 
-            Query query = new Table(EditTableType.create)
+            Query query = new Table(TableMode.create)
                 .Name("doctors")
                 .Columns()
                 .Begin()
@@ -32,12 +32,12 @@ namespace Aquiris.SQLite.Tests
             SQLiteTable.Run(query, _database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
 
-            query = new Table(EditTableType.create)
+            query = new Table(TableMode.create)
                 .Name("visits")
                 .Columns()
                 .Begin()
@@ -50,7 +50,7 @@ namespace Aquiris.SQLite.Tests
             SQLiteTable.Run(query, _database, result =>
             {
                 Assert.IsTrue(result.success);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -71,7 +71,7 @@ namespace Aquiris.SQLite.Tests
             {
                 Assert.IsTrue(result.success);
                 Assert.AreEqual(numberOfInsertions, result.value);
-                _waiter.Set();
+                WaiterSet();
             });
             
             WaitOne();
@@ -84,7 +84,7 @@ namespace Aquiris.SQLite.Tests
                 .AddColumn("visits.name").As().Alias("visitor_name")
                 .Select()
                 .From()
-                .TableName("doctors")
+                .Table("doctors")
                 .InnerJoin()
                 .Table("visits")
                 .On()
@@ -108,7 +108,7 @@ namespace Aquiris.SQLite.Tests
                 Assert.IsTrue(results[0].ContainsKey("name"));
                 Assert.IsTrue(results[0].ContainsKey("visitor_name"));
 
-                _waiter.Set();
+                WaiterSet();
                 
                 Console.WriteLine(results);
             });
@@ -124,7 +124,7 @@ namespace Aquiris.SQLite.Tests
 
         private static Query InsertNewDoctor(int id, string name, string degree)
         {
-            return new Insert(InsertType.insert)
+            return new Insert(InsertMode.insert)
                 .IntoTable("doctors")
                 .Columns()
                 .Begin()
@@ -145,7 +145,7 @@ namespace Aquiris.SQLite.Tests
 
         private static Query InsertNewVisit(int id, string name, string date)
         {
-            return new Insert(InsertType.insert)
+            return new Insert(InsertMode.insert)
                 .IntoTable("visits")
                 .Columns()
                 .Begin()
