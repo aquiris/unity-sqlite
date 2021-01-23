@@ -7,11 +7,6 @@ namespace Aquiris.SQLite.Queries
     public enum InsertMode
     {
         Insert,
-        InsertOrAbort,
-        InsertOrFail,
-        InsertOrIgnore,
-        InsertOrReplace,
-        InsertOrRollback,
         Replace,
     }
     
@@ -30,8 +25,13 @@ namespace Aquiris.SQLite.Queries
         }
         
         [UsedImplicitly]
-        public Insert Begin(InsertMode mode)
+        public Insert Begin(InsertMode mode, ConflictMode? conflictMode = null)
         {
+            if (conflictMode.HasValue)
+            {
+                _components.Add(new InsertComponent(conflictMode.Value));
+                return this;
+            }
             _components.Add(new InsertComponent(mode));
             return this;
         }

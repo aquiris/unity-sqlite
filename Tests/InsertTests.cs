@@ -88,7 +88,7 @@ namespace Aquiris.SQLite.Tests
                 Assert.IsTrue(result.success);
             });
 
-            query = CreateInsert(new Insert(), 10, InsertMode.InsertOrAbort)
+            query = CreateInsert(new Insert(), 10, InsertMode.Insert, ConflictMode.Abort)
                 .Build();
             
             SQLiteInsert.Run(query, _database, result =>
@@ -107,7 +107,7 @@ namespace Aquiris.SQLite.Tests
             });
         }
         
-        private static Insert CreateInsert(Insert insert, int index, InsertMode mode = InsertMode.Insert)
+        private static Insert CreateInsert(Insert insert, int index, InsertMode mode = InsertMode.Insert, ConflictMode? conflictMode = null)
         {
             insert = insert.Begin(mode)
                 .IntoTable("TestTable")

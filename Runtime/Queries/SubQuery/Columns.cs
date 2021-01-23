@@ -1,4 +1,5 @@
-﻿using Aquiris.SQLite.Queries.Components;
+﻿using System;
+using Aquiris.SQLite.Queries.Components;
 using Aquiris.SQLite.Shared;
 using JetBrains.Annotations;
 
@@ -64,6 +65,45 @@ namespace Aquiris.SQLite.Queries
         }
 
         [UsedImplicitly]
+        public Columns Constraint(string name)
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.CONSTRAINT));
+            _components.Add(new StringComponent(name));
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Columns PrimaryKey()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.PRIMARY_KEY));
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Columns OnConflict(ConflictMode mode)
+        {
+            _components.Add(new OnConflictComponent(mode));
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Columns Unique()
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.UNIQUE));
+            return this;
+        }
+
+        [UsedImplicitly]
+        public Columns Check(string expression)
+        {
+            _components.Add(new StringComponent(Constants.QueryComponents.CHECK));
+            _components.Add(new StringComponent(Constants.QueryComponents.PARENTHESIS_OPEN));
+            _components.Add(new StringComponent(expression));
+            _components.Add(new StringComponent(Constants.QueryComponents.PARENTHESIS_CLOSE));
+            return this;
+        }
+        
+        [UsedImplicitly]
         public Columns Rename(string name, string newName)
         {
             _components.Add(new StringComponent(Constants.QueryComponents.RENAME_COLUMN));
@@ -101,6 +141,12 @@ namespace Aquiris.SQLite.Queries
         public Values Values()
         {
             return new Values(_components);
+        }
+
+        [UsedImplicitly]
+        public ForeignKeys ForeignKey()
+        {
+            return new ForeignKeys(_components);
         }
     }
 }
