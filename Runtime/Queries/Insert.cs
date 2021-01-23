@@ -25,7 +25,7 @@ namespace Aquiris.SQLite.Queries
         }
         
         [UsedImplicitly]
-        public Insert Begin(InsertMode mode, ConflictMode? conflictMode)
+        public Insert Begin(InsertMode mode, ConflictMode? conflictMode = null)
         {
             if (conflictMode.HasValue)
             {
