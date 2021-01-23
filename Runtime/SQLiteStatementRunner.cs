@@ -5,6 +5,7 @@ using System.Threading;
 using Aquiris.SQLite.Queries;
 using Aquiris.SQLite.Shared;
 using Aquiris.SQLite.Threading;
+using JetBrains.Annotations;
 using Mono.Data.Sqlite;
 using UnityEngine;
 
@@ -13,36 +14,43 @@ namespace Aquiris.SQLite
     public abstract class SQLiteStatementRunner
     {
         private static readonly object _lock = new object();
+        private readonly ObjectPool<WorkItemInfo> _workItemPool = new ObjectPool<WorkItemInfo>(() => new WorkItemInfo());
+        private readonly WaitCallback _threadPoolRunner = default;
         private readonly Action _completedAction = default;
         private QueryResult _result = default;
         
         protected SQLiteStatementRunner()
         {
             _completedAction = Completed;
+            _threadPoolRunner = ThreadPoolRunner;
         }
         
         protected void Run(Query query, SQLiteDatabase database)
         {
-            WorkItemInfo state = new WorkItemInfo
+            WorkItemInfo state = _workItemPool.Rent();
+            state.database = database;
+            state.query = query;
+            state.queriesCount = 1;
+            if (ThreadSafety.isPlaying)
             {
-                database = database,
-                query = query,
-                queriesCount = 1,
-            };
-            if (ThreadSafety.isPlaying) ThreadPool.QueueUserWorkItem(ThreadPoolRunner, state);
-            else ThreadPoolRunner(state);
+                ThreadPool.QueueUserWorkItem(_threadPoolRunner, state);
+                return;
+            }
+            _threadPoolRunner.Invoke(state);
         }
 
         protected void Run(Query[] queries, int count, SQLiteDatabase database)
         {
-            WorkItemInfo state = new WorkItemInfo
+            WorkItemInfo state = _workItemPool.Rent();
+            state.database = database;
+            state.queries = queries;
+            state.queriesCount = count;
+            if (ThreadSafety.isPlaying)
             {
-                database = database,
-                queries = queries,
-                queriesCount = count,
-            };
-            if (ThreadSafety.isPlaying) ThreadPool.QueueUserWorkItem(ThreadPoolRunner, state);
-            else ThreadPoolRunner(state);
+                ThreadPool.QueueUserWorkItem(_threadPoolRunner, state);
+                return;
+            }
+            _threadPoolRunner.Invoke(state);
         }
 
         protected abstract object ExecuteThreaded(SqliteCommand command); 
@@ -63,6 +71,8 @@ namespace Aquiris.SQLite
                     else ExecuteMany(command, info.queries, info.queriesCount);
                     transaction.Commit();
                 }
+                
+                _workItemPool.Pay(info);
             }
             
             ThreadSafety.RunOnMainThread(_completedAction);
@@ -136,12 +146,12 @@ namespace Aquiris.SQLite
             }
         }
         
-        private struct WorkItemInfo
+        private class WorkItemInfo
         {
-            public SQLiteDatabase database;
-            public Query query;
-            public Query[] queries;
-            public int queriesCount;
+            public SQLiteDatabase database = default;
+            public Query query = default;
+            public Query[] queries = default;
+            public int queriesCount = default;
         }
     }
 }
