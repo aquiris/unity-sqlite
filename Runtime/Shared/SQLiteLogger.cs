@@ -79,9 +79,8 @@ namespace Aquiris.SQLite.Shared
             }
             return _logBuilder.ToString();
         }
-#endif
 
-        public readonly struct LogPart
+        internal readonly struct LogPart
         {
             public static LogPart newLine = new LogPart("\n", Color.white);
             
@@ -99,5 +98,6 @@ namespace Aquiris.SQLite.Shared
                 return (byte) (value * 255F);
             }
         }
+#endif
     }
 }
