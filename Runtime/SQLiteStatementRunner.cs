@@ -85,7 +85,7 @@ namespace Aquiris.SQLite
             try
             {
                 SQLiteLogger.Log(new SQLiteLogger.LogPart("Query: ", Color.white),
-                    new SQLiteLogger.LogPart(query.statement, Color.blue),
+                    new SQLiteLogger.LogPart(query.statement, Constants.Colors.lightBlue),
                     SQLiteLogger.LogPart.newLine,
                     new SQLiteLogger.LogPart("Executed successfully", Color.white));
                 
@@ -97,7 +97,7 @@ namespace Aquiris.SQLite
             catch (SqliteException ex)
             {
                 SQLiteLogger.LogWarning(new SQLiteLogger.LogPart("Query: ", Color.white), 
-                    new SQLiteLogger.LogPart(query.statement, Color.blue),
+                    new SQLiteLogger.LogPart(query.statement, Constants.Colors.lightBlue),
                     SQLiteLogger.LogPart.newLine,
                     new SQLiteLogger.LogPart("Execution failed with error: ", Color.white),
                     SQLiteLogger.LogPart.newLine,

@@ -63,7 +63,7 @@ namespace Aquiris.SQLite
                 SQLiteLogger.LogError(
                     new SQLiteLogger.LogPart("Error trying to open database with connection string:", Color.white),
                     SQLiteLogger.LogPart.newLine,
-                    new SQLiteLogger.LogPart(_connection.ConnectionString, Color.blue),
+                    new SQLiteLogger.LogPart(_connection.ConnectionString, Constants.Colors.lightBlue),
                     SQLiteLogger.LogPart.newLine,
                     new SQLiteLogger.LogPart(ex, Color.red));
 #else
@@ -116,7 +116,7 @@ namespace Aquiris.SQLite
                 SQLiteLogger.LogError(
                     new SQLiteLogger.LogPart("Error trying to create database file at path:", Color.white),
                     SQLiteLogger.LogPart.newLine,
-                    new SQLiteLogger.LogPart(databaseFilePath, Color.blue),
+                    new SQLiteLogger.LogPart(databaseFilePath, Constants.Colors.lightBlue),
                     SQLiteLogger.LogPart.newLine,
                     new SQLiteLogger.LogPart(ex, Color.red));                
 #else
