@@ -80,7 +80,22 @@ namespace Aquiris.SQLite.Shared
             public const string JOIN = "JOIN";
             public const string ON = "ON";
             public const string DELETE = "DELETE";
-
+            public const string CONSTRAINT = "CONSTRAINT";
+            public const string PRIMARY_KEY = "PRIMARY KEY";
+            public const string ON_CONFLICT = "ON CONFLICT";
+            public const string FOREIGN_KEY = "FOREIGN KEY";
+            public const string CHECK = "CHECK";
+            public const string SET_NULL = "SET_NULL";
+            public const string SET_DEFAULT = "SET_DEFAULT";
+            public const string CASCADE = "CASCADE";
+            public const string RESTRICT = "RESTRICT";
+            public const string NO_ACTION = "NO_ACTION";
+            public const string UPDATE = "UPDATE";
+            public const string REFERENCES = "REFERENCES";
+            public const string MATCH = "MATCH";
+            public const string DEFERRABLE = "DEFERRABLE";
+            public const string INITIALLY_DEFERRED = "INITIALLY DEFERRED";
+            public const string INITIALLY_IMMEDIATE = "INITIALLY IMMEDIATE";
 
             #region Operators
 
