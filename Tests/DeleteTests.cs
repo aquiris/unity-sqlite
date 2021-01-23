@@ -18,7 +18,7 @@ namespace Aquiris.SQLite.Tests
             _database.Open();
 
             Query query = new Table()
-                .Begin(TableMode.create)
+                .Begin(TableMode.Create)
                 .Name("Test")
                 .Columns().Begin()
                 .DeclareColumn("Column1", DataType.Integer).Separator()
@@ -33,7 +33,7 @@ namespace Aquiris.SQLite.Tests
             
             Query[] queries = new Query[2];
             queries[0] = new Insert()
-                .Begin(InsertMode.insert)
+                .Begin(InsertMode.Insert)
                 .IntoTable("Test")
                 .Columns().Begin()
                 .AddColumn("Column1").Separator()
@@ -45,7 +45,7 @@ namespace Aquiris.SQLite.Tests
 
 
             queries[1] = new Insert()
-                .Begin(InsertMode.insert)
+                .Begin(InsertMode.Insert)
                 .IntoTable("Test")
                 .Columns().Begin()
                 .AddColumn("Column1").Separator()

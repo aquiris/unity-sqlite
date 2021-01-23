@@ -8,25 +8,31 @@ using UnityEngine;
 
 namespace Aquiris.SQLite
 {
+    public enum LogMode
+    {
+        Off,
+        Verbose,
+    }
+    
     public enum OpenResult
     {
         Open,
         AlreadyOpen,
-        Failure
+        Failure,
     }
 
     public enum CloseResult
     {
         Close,
         AlreadyClose,
-        Failure
+        Failure,
     }
 
     public enum CreateResult
     {
         Create,
         AlreadyExists,
-        Failure
+        Failure,
     }
     
     public class SQLiteDatabase
