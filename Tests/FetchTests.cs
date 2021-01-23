@@ -23,7 +23,7 @@ namespace Aquiris.SQLite.Tests
                 Assert.IsTrue(result.success);
             });
             
-            const int itemCount = 1000;
+            const int itemCount = 100;
             Values values = new Insert()
                 .Begin(InsertMode.Insert)
                 .IntoTable("TestTable")
