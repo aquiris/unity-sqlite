@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.IO;
+using Aquiris.SQLite.Shared;
 using Aquiris.SQLite.Threading;
 using JetBrains.Annotations;
 using Mono.Data.Sqlite;
@@ -8,12 +9,6 @@ using UnityEngine;
 
 namespace Aquiris.SQLite
 {
-    public enum LogMode
-    {
-        Off,
-        Verbose,
-    }
-    
     public enum OpenResult
     {
         Open,
@@ -38,7 +33,7 @@ namespace Aquiris.SQLite
     public class SQLiteDatabase
     {
         private readonly SqliteConnection _connection = default;
-        
+
         public SQLiteDatabase(string filePath)
         {
             ThreadSafety.Initialize();
@@ -65,11 +60,15 @@ namespace Aquiris.SQLite
 #if UNITY_EDITOR
             catch (Exception ex)
             {
-                Debug.LogWarning(ex);
+                SQLiteLogger.LogError(
+                    new SQLiteLogger.LogPart("Error trying to open database with connection string:", Color.white),
+                    SQLiteLogger.LogPart.newLine,
+                    new SQLiteLogger.LogPart(_connection.ConnectionString, Color.blue),
+                    SQLiteLogger.LogPart.newLine,
+                    new SQLiteLogger.LogPart(ex, Color.red));
 #else
             catch
             {
-                
 #endif
                 return OpenResult.Failure;
             }
@@ -88,7 +87,10 @@ namespace Aquiris.SQLite
 #if UNITY_EDITOR
             catch (Exception ex)
             {
-                Debug.LogWarning(ex);
+                SQLiteLogger.LogError(
+                    new SQLiteLogger.LogPart("Error trying to close database:", Color.white),
+                    SQLiteLogger.LogPart.newLine,
+                    new SQLiteLogger.LogPart(ex, Color.red));
 #else
             catch 
             {
@@ -111,7 +113,12 @@ namespace Aquiris.SQLite
 #if UNITY_EDITOR
             catch (SqliteException ex)
             {
-                Debug.LogWarning(ex);                
+                SQLiteLogger.LogError(
+                    new SQLiteLogger.LogPart("Error trying to create database file at path:", Color.white),
+                    SQLiteLogger.LogPart.newLine,
+                    new SQLiteLogger.LogPart(databaseFilePath, Color.blue),
+                    SQLiteLogger.LogPart.newLine,
+                    new SQLiteLogger.LogPart(ex, Color.red));                
 #else
             catch
             {

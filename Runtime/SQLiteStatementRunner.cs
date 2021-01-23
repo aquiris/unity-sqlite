@@ -5,7 +5,6 @@ using System.Threading;
 using Aquiris.SQLite.Queries;
 using Aquiris.SQLite.Shared;
 using Aquiris.SQLite.Threading;
-using JetBrains.Annotations;
 using Mono.Data.Sqlite;
 using UnityEngine;
 
@@ -85,6 +84,11 @@ namespace Aquiris.SQLite
             PrepareParameters(command, query);
             try
             {
+                SQLiteLogger.Log(new SQLiteLogger.LogPart("Query: ", Color.white),
+                    new SQLiteLogger.LogPart(query.statement, Color.blue),
+                    SQLiteLogger.LogPart.newLine,
+                    new SQLiteLogger.LogPart("Executed successfully", Color.white));
+                
                 _result.value = ExecuteThreaded(command);
                 _result.success = true;
                 _result.errorCode = SQLiteErrorCode.Ok;
@@ -92,9 +96,13 @@ namespace Aquiris.SQLite
             }
             catch (SqliteException ex)
             {
-#if UNITY_EDITOR
-                Debug.LogWarning($"Query: {command.CommandText}{Constants.newLine}{ex}");
-#endif
+                SQLiteLogger.LogWarning(new SQLiteLogger.LogPart("Query: ", Color.white), 
+                    new SQLiteLogger.LogPart(query.statement, Color.blue),
+                    SQLiteLogger.LogPart.newLine,
+                    new SQLiteLogger.LogPart("Execution failed with error: ", Color.white),
+                    SQLiteLogger.LogPart.newLine,
+                    new SQLiteLogger.LogPart(ex, Color.red));
+                
                 _result.success = false;
                 _result.errorCode = ex.ErrorCode;
                 _result.errorMessage = ex.Message;
