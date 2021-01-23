@@ -7,10 +7,10 @@ namespace Aquiris.SQLite.Queries
 {
     public enum CompoundType
     {
-        union,
-        unionAll,
-        intersects,
-        except,
+        Union,
+        UnionAll,
+        Intersects,
+        Except,
     }
     
     public readonly struct Compound
@@ -22,17 +22,17 @@ namespace Aquiris.SQLite.Queries
             _components = components;
             switch (type)
             {
-                case CompoundType.union:
+                case CompoundType.Union:
                     _components.Add(new StringComponent(Constants.QueryComponents.UNION));
                     break;
-                case CompoundType.unionAll:
+                case CompoundType.UnionAll:
                     _components.Add(new StringComponent(Constants.QueryComponents.UNION));
                     _components.Add(new StringComponent(Constants.QueryComponents.SELECT_ALL));
                     break;
-                case CompoundType.intersects:
+                case CompoundType.Intersects:
                     _components.Add(new StringComponent(Constants.QueryComponents.INTERSECT));
                     break;
-                case CompoundType.except:
+                case CompoundType.Except:
                     _components.Add(new StringComponent(Constants.QueryComponents.EXCEPT));
                     break;
                 default:

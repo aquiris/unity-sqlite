@@ -6,13 +6,13 @@ namespace Aquiris.SQLite.Queries
 {
     public enum InsertMode
     {
-        insert,
-        insertOrAbort,
-        insertOrFail,
-        insertOrIgnore,
-        insertOrReplace,
-        insertOrRollback,
-        replace,
+        Insert,
+        InsertOrAbort,
+        InsertOrFail,
+        InsertOrIgnore,
+        InsertOrReplace,
+        InsertOrRollback,
+        Replace,
     }
     
     public struct Insert 

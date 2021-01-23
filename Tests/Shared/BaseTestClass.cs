@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using System.Threading;
+using Aquiris.SQLite.Shared;
 using NUnit.Framework;
 
 namespace Aquiris.SQLite.Tests.Shared
@@ -13,6 +13,8 @@ namespace Aquiris.SQLite.Tests.Shared
         {
             if (!File.Exists(Constants.databaseFilePath)) return;
             File.Delete(Constants.databaseFilePath);
+
+            SQLiteLogger.loggingLevel = LoggingLevel.Verbose;
         }
 
         [TearDown]

@@ -82,25 +82,25 @@ namespace Aquiris.SQLite.Queries
         [UsedImplicitly]
         public Compound Union()
         {
-            return new Compound(_components, CompoundType.union);
+            return new Compound(_components, CompoundType.Union);
         }
 
         [UsedImplicitly]
         public Compound UnionAll()
         {
-            return new Compound(_components, CompoundType.unionAll);
+            return new Compound(_components, CompoundType.UnionAll);
         }
 
         [UsedImplicitly]
         public Compound Intersects()
         {
-            return new Compound(_components, CompoundType.intersects);
+            return new Compound(_components, CompoundType.Intersects);
         }
 
         [UsedImplicitly]
         public Compound Except()
         {
-            return new Compound(_components, CompoundType.except);
+            return new Compound(_components, CompoundType.Except);
         }
 
         [UsedImplicitly]

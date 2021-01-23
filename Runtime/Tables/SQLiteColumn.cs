@@ -21,7 +21,7 @@ namespace Aquiris.SQLite.Tables
         public void Rename(string newName, SQLiteTable table, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
             Query query = new Table()
-                .Begin(TableMode.alter)
+                .Begin(TableMode.Alter)
                 .Name(table.name)
                 .Columns()
                 .Rename(name, newName)

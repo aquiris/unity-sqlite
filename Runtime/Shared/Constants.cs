@@ -1,15 +1,14 @@
-﻿using System;
+﻿using UnityEngine;
 
 namespace Aquiris.SQLite.Shared
 {
     internal static class Constants
     {
-        public static readonly string newLine = Environment.NewLine;
-        public static readonly string commaNewLine = $", {newLine}";
-
-        public const int maxNumberOfBindings = 1024 * 1024;
-        public const int maxNumberOfQueryComponents = 1024 * 1024;
-
+        internal static class Colors
+        {
+            public static readonly Color lightBlue = new Color(.1F, .5F, 1F);
+        }
+        
         internal static class QueryComponents
         {
             public const string SPACE = " ";

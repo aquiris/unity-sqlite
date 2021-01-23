@@ -11,25 +11,25 @@ namespace Aquiris.SQLite.Queries.Components
         {
             switch (mode)
             {
-                case InsertMode.insert:
+                case InsertMode.Insert:
                     value = Constants.QueryComponents.INSERT;
                     break;
-                case InsertMode.insertOrAbort:
+                case InsertMode.InsertOrAbort:
                     value = Constants.QueryComponents.INSERT_OR_ABORT;
                     break;
-                case InsertMode.insertOrFail:
+                case InsertMode.InsertOrFail:
                     value = Constants.QueryComponents.INSERT_OR_FAIL;
                     break;
-                case InsertMode.insertOrIgnore:
+                case InsertMode.InsertOrIgnore:
                     value = Constants.QueryComponents.INSERT_OR_IGNORE;
                     break;
-                case InsertMode.insertOrReplace:
+                case InsertMode.InsertOrReplace:
                     value = Constants.QueryComponents.INSERT_OR_REPLACE;
                     break;
-                case InsertMode.insertOrRollback:
+                case InsertMode.InsertOrRollback:
                     value = Constants.QueryComponents.INSERT_OR_ROLLBACK;
                     break;
-                case InsertMode.replace:
+                case InsertMode.Replace:
                     value = Constants.QueryComponents.REPLACE;
                     break;
                 default:

@@ -7,9 +7,9 @@ namespace Aquiris.SQLite.Queries
 {
     public enum TableMode
     {
-        create,
-        alter,
-        drop,
+        Create,
+        Alter,
+        Drop,
     }
     
     public struct Table
@@ -31,16 +31,16 @@ namespace Aquiris.SQLite.Queries
         {
             switch (mode)
             {
-                case TableMode.create:
+                case TableMode.Create:
                     StringComponent createTable = new StringComponent(Constants.QueryComponents.CREATE_TABLE);
                     StringComponent createView = new StringComponent(Constants.QueryComponents.CREATE_VIEW);
                     _components.Add(isView ? createView : createTable);
                     break;
-                case TableMode.alter:
+                case TableMode.Alter:
                     if (isView) throw new NotSupportedException("Sqlite error: Cannot alter a view");
                     _components.Add(new StringComponent(Constants.QueryComponents.ALTER_TABLE));
                     break;
-                case TableMode.drop:
+                case TableMode.Drop:
                     StringComponent dropTable = new StringComponent(Constants.QueryComponents.DROP_TABLE);
                     StringComponent dropView = new StringComponent(Constants.QueryComponents.DROP_VIEW);
                     _components.Add(isView ? dropView : dropTable);
