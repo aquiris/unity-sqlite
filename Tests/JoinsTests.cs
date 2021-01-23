@@ -18,7 +18,7 @@ namespace Aquiris.SQLite.Tests
             _database.Open();
 
             Query query = new Table()
-                .Begin(TableMode.create)
+                .Begin(TableMode.Create)
                 .Name("doctors")
                 .Columns()
                 .Begin()
@@ -34,7 +34,7 @@ namespace Aquiris.SQLite.Tests
             });
             
             query = new Table()
-                .Begin(TableMode.create)
+                .Begin(TableMode.Create)
                 .Name("visits")
                 .Columns()
                 .Begin()
@@ -106,7 +106,7 @@ namespace Aquiris.SQLite.Tests
         private static Query InsertNewDoctor(int id, string name, string degree)
         {
             return new Insert()
-                .Begin(InsertMode.insert)
+                .Begin(InsertMode.Insert)
                 .IntoTable("doctors")
                 .Columns().Begin()
                 .AddColumn("id").Separator()
@@ -124,7 +124,7 @@ namespace Aquiris.SQLite.Tests
         private static Query InsertNewVisit(int id, string name, string date)
         {
             return new Insert()
-                .Begin(InsertMode.insert)
+                .Begin(InsertMode.Insert)
                 .IntoTable("visits")
                 .Columns().Begin()
                 .AddColumn("doctor_id").Separator()

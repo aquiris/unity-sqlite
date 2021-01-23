@@ -1,5 +1,4 @@
 ﻿using Aquiris.SQLite.Queries;
-using Aquiris.SQLite.Runtime.Insertion;
 using Aquiris.SQLite.Shared;
 using Aquiris.SQLite.Tests.Shared;
 using NUnit.Framework;
@@ -48,7 +47,7 @@ namespace Aquiris.SQLite.Tests
             
             const int itemCount = 1000;
             Values values = new Insert()
-                .Begin(InsertMode.insert)
+                .Begin(InsertMode.Insert)
                 .IntoTable("TestTable")
                 .Columns().Begin()
                 .AddColumn(_intColumn.name).Separator()
@@ -89,7 +88,7 @@ namespace Aquiris.SQLite.Tests
                 Assert.IsTrue(result.success);
             });
 
-            query = CreateInsert(new Insert(), 10, InsertMode.insertOrAbort)
+            query = CreateInsert(new Insert(), 10, InsertMode.InsertOrAbort)
                 .Build();
             
             SQLiteInsert.Run(query, _database, result =>
@@ -108,7 +107,7 @@ namespace Aquiris.SQLite.Tests
             });
         }
         
-        private static Insert CreateInsert(Insert insert, int index, InsertMode mode = InsertMode.insert)
+        private static Insert CreateInsert(Insert insert, int index, InsertMode mode = InsertMode.Insert)
         {
             insert = insert.Begin(mode)
                 .IntoTable("TestTable")

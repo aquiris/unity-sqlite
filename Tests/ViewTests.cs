@@ -22,7 +22,7 @@ namespace Aquiris.SQLite.Tests
             });
 
             Query query = new Insert()
-	            .Begin(InsertMode.insert)
+	            .Begin(InsertMode.Insert)
 	            .IntoTable("TestTable")
 	            .Columns().Begin()
 	            .AddColumn("Column1").End()
@@ -36,7 +36,7 @@ namespace Aquiris.SQLite.Tests
             });
             
             query = new Table()
-	            .Begin(TableMode.create, true)
+	            .Begin(TableMode.Create, true)
                 .IfNotExists()
                 .Name("MyView")
                 .As()
@@ -61,7 +61,7 @@ namespace Aquiris.SQLite.Tests
 	        _database.Open();
 
 	        Table table = new Table()
-		        .Begin(TableMode.create)
+		        .Begin(TableMode.Create)
 		        .Name("BigTable")
 		        .Columns()
 		        .Begin()
@@ -92,7 +92,7 @@ namespace Aquiris.SQLite.Tests
 	        });
 	        
 	        query = new Table()
-		        .Begin(TableMode.create, true)
+		        .Begin(TableMode.Create, true)
 		        .Name("BigView")
 		        .As()
 		        .Select()

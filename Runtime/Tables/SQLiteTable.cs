@@ -25,7 +25,7 @@ namespace Aquiris.SQLite
         public void Create(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
             Table table = new Table()
-                .Begin(TableMode.create)
+                .Begin(TableMode.Create)
                 .Name(name);
             Query query = DeclareColumns(table).Build();
             _runner.Run(query, database, onCompleteAction);
@@ -35,7 +35,7 @@ namespace Aquiris.SQLite
         public void CreateIfNotExists(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
             Table table = new Table()
-                .Begin(TableMode.create)
+                .Begin(TableMode.Create)
                 .IfNotExists()
                 .Name(name);
             Query query = DeclareColumns(table).Build();
@@ -46,7 +46,7 @@ namespace Aquiris.SQLite
         public void Rename(string newName, SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
             Query query = new Table()
-                .Begin(TableMode.alter)
+                .Begin(TableMode.Alter)
                 .Name(name)
                 .RenameTo(newName)
                 .Build();
@@ -60,7 +60,7 @@ namespace Aquiris.SQLite
         public void Drop(SQLiteDatabase database, Action<QueryResult> onCompleteAction)
         {
             Query query = new Table()
-                .Begin(TableMode.drop)
+                .Begin(TableMode.Drop)
                 .Name(name)
                 .Build();
             _runner.Run(query, database, onCompleteAction);
@@ -69,7 +69,7 @@ namespace Aquiris.SQLite
         public void AddColumn(SQLiteDatabase database, SQLiteColumn column, Action<QueryResult> onCompleteAction)
         {
             Query query = new Table()
-                .Begin(TableMode.alter)
+                .Begin(TableMode.Alter)
                 .Name(name)
                 .AddColumn()
                 .DeclareColumn(column.name, column.dataType)

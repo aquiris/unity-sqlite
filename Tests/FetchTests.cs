@@ -25,7 +25,7 @@ namespace Aquiris.SQLite.Tests
             
             const int itemCount = 1000;
             Values values = new Insert()
-                .Begin(InsertMode.insert)
+                .Begin(InsertMode.Insert)
                 .IntoTable("TestTable")
                 .Columns().Begin()
                 .AddColumn("Column1").Separator()

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Aquiris.SQLite.Shared;
 using JetBrains.Annotations;
 
 namespace Aquiris.SQLite.Queries
@@ -8,24 +7,25 @@ namespace Aquiris.SQLite.Queries
     {
         public string statement;
 
-        public KeyValuePair<string, object>[] bindings { get; private set; }
-        public int bindingsCount { get; private set; }
-
+        public List<KeyValuePair<string, object>> bindings { get; private set; }
+        public int bindingCount => bindings?.Count ?? 0;
+        
         public Query(string statement)
         {
             this.statement = statement;
-            bindingsCount = 0;
-            bindings = new KeyValuePair<string, object>[Constants.maxNumberOfBindings];
+            bindings = new List<KeyValuePair<string, object>>();
         }
 
         [UsedImplicitly]
         public void Bind(KeyValuePair<string, object> binding)
         {
-            if (bindings == null) bindings = new KeyValuePair<string, object>[Constants.maxNumberOfBindings];
-            int bindingIndex = bindingsCount;
-            if (!Find(binding.Key, ref bindingIndex))
-                bindingsCount += 1;
-            bindings[bindingIndex] = binding;
+            if (bindings == null) bindings = new List<KeyValuePair<string, object>>();
+            if (Find(binding.Key, out int bindingIndex))
+            {
+                bindings[bindingIndex] = binding;
+                return;
+            }
+            bindings.Add(binding);
         }
 
         [UsedImplicitly]
@@ -40,14 +40,15 @@ namespace Aquiris.SQLite.Queries
             }
         }
 
-        private bool Find(string binding, ref int existingIndex)
+        private bool Find(string binding, out int existingIndex)
         {
-            for (int index = 0; index < bindingsCount; index++)
+            for (int index = 0; index < bindings.Count; index++)
             {
                 if (!string.Equals(binding, bindings[index].Key)) continue;
                 existingIndex = index;
                 return true;
             }
+            existingIndex = -1;
             return false;
         }
     }
