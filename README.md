@@ -151,6 +151,7 @@ That's it for now.
 
 ## Future plans
 - Add an ORM to easily manage tables and data;
+- Recompile SQLite native binaries to include sqlicypher (encryption);
 
 That's all folks.
 
