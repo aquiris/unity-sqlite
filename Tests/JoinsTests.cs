@@ -88,7 +88,7 @@ namespace Aquiris.SQLite.Tests
                 .Binding("M D")
                 .Select()
                 .Build();
-            SQLiteFetch.Run(null, query, _database, result =>
+            SQLiteFetch.Run(query, _database, result =>
             {
                 Assert.IsTrue(result.success);
                 List<Dictionary<string, object>> results = (List<Dictionary<string, object>>) result.value;
