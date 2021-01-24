@@ -84,7 +84,7 @@ namespace Aquiris.SQLite.Tests
                 .Table("Test")
                 .Build();
             
-            SQLiteFetch.Run(null, query, _database, result =>
+            SQLiteFetch.Run(query, _database, result =>
             {
                 Assert.IsTrue(result.success);
 
