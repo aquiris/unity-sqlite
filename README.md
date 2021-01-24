@@ -44,7 +44,8 @@ And now an example of API query assemble:
 // Inserting data
 // database open
 
-Query query = new Insert(InsertType.insert) // begins with INSERT or INSERT OR ABORT for example
+Query query = new Insert()
+        .Begin(InsertMode.Insert) // begins with INSERT
         .IntoTable("doctors") // adds INTO doctors to the queue
         .Columns().Begin() // goes to the Columns struct and then adds (
         .AddColumn("id").Separator() // adds id and then a comma
@@ -52,9 +53,9 @@ Query query = new Insert(InsertType.insert) // begins with INSERT or INSERT OR A
         .AddColumn("degree").End() // adds degree and then adds )
         .Insert() // goes back to Insert struct
         .Values().Begin() // goes to Values struct and then adds VALUES and (
-        .Add("id", id).Separator() // adds a binding for id and bind the value to the query then adds a comma
-        .Add("name", name).Separator() // adds a binding for name and bind the value to the query then adds a comma
-        .Add("degree", degree).End() // adds a binding for degree and bind the value to the query then adds ) 
+        .Bind(id).Separator() // adds a binding for id and bind the value to the query then adds a comma
+        .Bind(name).Separator() // adds a binding for name and bind the value to the query then adds a comma
+        .Bind(degree).End() // adds a binding for degree and bind the value to the query then adds ) 
         .Insert().Build(); // goes back to Insert struct and then builds the Query struct;
         
 SQLiteInsert.Run(query, database, completion);
@@ -70,13 +71,14 @@ SQLiteInsert.Run(queries, database, completion);
 A inner join example:
 
 ```c#
-Query query = new Select().Begin()
+Query query = new Select()
+                .Begin()
                 .Columns() 
                 .AddColumn("doctors.id").Separator()
                 .AddColumn("doctors.name").Separator()
                 .AddColumn("visits.name").As().Alias("visitor_name")
                 .Select().From() 
-                .TableName("doctors")
+                .Table("doctors")
                 .InnerJoin()
                 .Table("visits").On()
                 .Column("doctors.id")
@@ -85,13 +87,67 @@ Query query = new Select().Begin()
                 .Where()
                 .Column("doctors.degree")
                 .Equal()
-                .Binding("degreeValue", "M D")
+                .Binding("M D")
                 .Select().Build();
                 
 SQLiteFetch.Run(query, database, completion);
 ```
 
-That's it for now. Easy right?
+If you want to setup data parsers to map the results of a select query to your models you could do:
+
+```c#
+struct Doctor 
+{
+    public int id;
+    public string name;
+    public string degree;
+}
+
+class DoctorParser : ISQLiteFetchParser 
+{
+    public object Parse(SqliteDataReader reader) 
+    {
+        List<Doctor> doctors = new List<Doctor>();
+        while (reader.Read()) 
+        {
+            Doctor doctor = new Doctor();
+            for (int index = 0; index < reader.VisibleFieldCount; index += 1) 
+            {
+                string fieldName = reader.GetName(index);
+                object value = reader.GetValue(index);
+                switch (fieldName) 
+                {
+                    case "id": doctor.id = (int)value; break;
+                    case "name": doctor.name = (string)value; break;
+                    case "degree": doctor.degree = (string)value; break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(fieldName), fieldName, "Unexpected field");
+                }
+            }
+            doctors.Add(doctor);              
+        }
+        return doctors;            
+    }
+}
+
+Query query = new Select()
+                .Begin()
+                .All() // or specific columns
+                .From()
+                .Table("doctors")
+                .Build();
+SQLiteFetch.Run(query, database, new DoctorParser(), result => {
+    if (result.success) 
+    {
+        List<Doctor> doctors = (List<Doctor>)result.value;
+        // do something with your parsed results
+        return;
+    } 
+    // do something with the error info.
+});
+```
+
+That's it for now.
 
 ## Future plans
 - Add an ORM to easily manage tables and data;
