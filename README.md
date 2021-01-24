@@ -11,6 +11,15 @@ Aquiris SQLite UPM.
 
 To add more platforms, we just need to build the SQLite native binaries to the platform and include the binaries in this project.
 
+## Installation
+
+To install this into your project you can download this repository and include this code into your `Assets` folder.
+Or you can use the UPM by adding a package from git URL:
+
+`https://github.com/aquiris/unity-sqlite.git#[branch]`
+
+Where you should replace `[branch]` by the branch you want the UPM to point to.
+
 ## API
 
 We tried to implement a secure, easy and memory friendly, with the best performance we can achieve, API to facilitate SQLite query assemble.
