@@ -1,6 +1,6 @@
 ﻿{
   "name": "br.com.aquiris.sqlite",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "displayName": "Aquiris Unity SQLite",
   "description": "This package ads support for using SQLite within Unity.",
   "unity": "2019.4",

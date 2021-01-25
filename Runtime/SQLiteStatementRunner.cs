@@ -17,13 +17,13 @@ namespace Aquiris.SQLite
         private readonly WaitCallback _threadPoolRunner = default;
         private readonly Action _completedAction = default;
         private QueryResult _result = default;
-        
+
         protected SQLiteStatementRunner()
         {
             _completedAction = Completed;
             _threadPoolRunner = ThreadPoolRunner;
         }
-        
+
         protected void Run(Query query, SQLiteDatabase database)
         {
             WorkItemInfo state = _workItemPool.Rent();
@@ -35,6 +35,7 @@ namespace Aquiris.SQLite
                 ThreadPool.QueueUserWorkItem(_threadPoolRunner, state);
                 return;
             }
+
             _threadPoolRunner.Invoke(state);
         }
 
@@ -49,11 +50,12 @@ namespace Aquiris.SQLite
                 ThreadPool.QueueUserWorkItem(_threadPoolRunner, state);
                 return;
             }
+
             _threadPoolRunner.Invoke(state);
         }
 
-        protected abstract object ExecuteThreaded(SqliteCommand command); 
-        
+        protected abstract object ExecuteThreaded(SqliteCommand command);
+
         protected abstract void Completed(QueryResult _);
 
         private void ThreadPoolRunner(object state)
@@ -70,10 +72,10 @@ namespace Aquiris.SQLite
                     else ExecuteMany(command, info.queries, info.queriesCount);
                     transaction.Commit();
                 }
-                
+
                 _workItemPool.Pay(info);
             }
-            
+
             ThreadSafety.RunOnMainThread(_completedAction);
         }
 
@@ -88,7 +90,7 @@ namespace Aquiris.SQLite
                     new SQLiteLogger.LogPart(query.statement, Constants.Colors.lightBlue),
                     SQLiteLogger.LogPart.newLine,
                     new SQLiteLogger.LogPart("Executed successfully", Color.white));
-                
+
                 _result.value = ExecuteThreaded(command);
                 _result.success = true;
                 _result.errorCode = SQLiteErrorCode.Ok;
@@ -96,13 +98,13 @@ namespace Aquiris.SQLite
             }
             catch (SqliteException ex)
             {
-                SQLiteLogger.LogWarning(new SQLiteLogger.LogPart("Query: ", Color.white), 
+                SQLiteLogger.LogWarning(new SQLiteLogger.LogPart("Query: ", Color.white),
                     new SQLiteLogger.LogPart(query.statement, Constants.Colors.lightBlue),
                     SQLiteLogger.LogPart.newLine,
                     new SQLiteLogger.LogPart("Execution failed with error: ", Color.white),
                     SQLiteLogger.LogPart.newLine,
                     new SQLiteLogger.LogPart(ex, Color.red));
-                
+
                 _result.success = false;
                 _result.errorCode = ex.ErrorCode;
                 _result.errorMessage = ex.Message;
@@ -127,6 +129,7 @@ namespace Aquiris.SQLite
                 (DbType type, int size) = GetDataInfo(binding.Value);
                 command.Parameters.Add(binding.Key, type, size).Value = binding.Value;
             }
+
             command.Prepare();
         }
 
@@ -150,10 +153,10 @@ namespace Aquiris.SQLite
                                      $"\tfloat\n" +
                                      $"\tstring\n" +
                                      $"\tbyte[]\n";
-                    throw new ArgumentOutOfRangeException(nameof(value), value, message); 
+                    throw new ArgumentOutOfRangeException(nameof(value), value, message);
             }
         }
-        
+
         private class WorkItemInfo
         {
             public SQLiteDatabase database = default;
@@ -163,4 +166,3 @@ namespace Aquiris.SQLite
         }
     }
 }
-    
