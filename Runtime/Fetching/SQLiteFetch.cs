@@ -27,7 +27,7 @@ namespace Aquiris.SQLite.Fetching
             _runner.Run(query, database, onCompleteAction);
         }
 
-        public static QueryResult SyncRun(Query query, SQLiteDatabase database)
+        public static QueryResult RunSync(Query query, SQLiteDatabase database)
         {
             return _runner.RunSync(query, database);
         }

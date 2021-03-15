@@ -66,7 +66,7 @@ namespace Aquiris.SQLite.Tests
                 Assert.IsTrue(results[0].ContainsKey("Column3"));
             });
             
-            QueryResult syncResult = SQLiteFetch.SyncRun(query, _database);
+            QueryResult syncResult = SQLiteFetch.RunSync(query, _database);
             Assert.IsTrue(syncResult.success);
             Assert.IsNotNull(syncResult.value);
 
