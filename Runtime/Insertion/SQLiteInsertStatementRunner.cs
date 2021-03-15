@@ -23,7 +23,7 @@ namespace Aquiris.SQLite.Runtime.Insertion
             Run(queries, count, database);
         }
         
-        protected override object ExecuteThreaded(SqliteCommand command)
+        protected override object Execute(SqliteCommand command)
         {
             _insertCount += command.ExecuteNonQuery();
             return null;

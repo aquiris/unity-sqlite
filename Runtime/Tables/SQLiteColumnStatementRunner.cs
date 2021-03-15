@@ -14,7 +14,7 @@ namespace Aquiris.SQLite.Runtime.Tables
             Run(query, database);
         }
 
-        protected override object ExecuteThreaded(SqliteCommand command)
+        protected override object Execute(SqliteCommand command)
         {
             command.ExecuteNonQuery();
             return null;

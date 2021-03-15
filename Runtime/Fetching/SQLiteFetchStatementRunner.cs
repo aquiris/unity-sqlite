@@ -16,8 +16,8 @@ namespace Aquiris.SQLite.Fetching
             _callbackAction = callbackAction;
             Run(query, database);
         }
-
-        protected override object ExecuteThreaded(SqliteCommand command)
+        
+        protected override object Execute(SqliteCommand command)
         {
             using (SqliteDataReader reader = command.ExecuteReader())
             {

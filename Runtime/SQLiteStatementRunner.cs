@@ -54,8 +54,8 @@ namespace Aquiris.SQLite
             _threadPoolRunner.Invoke(state);
         }
 
-        protected abstract object ExecuteThreaded(SqliteCommand command);
-
+        protected abstract object Execute(SqliteCommand command);
+        
         protected abstract void Completed(QueryResult _);
 
         private void ThreadPoolRunner(object state)
@@ -81,7 +81,15 @@ namespace Aquiris.SQLite
 
         private void Completed() => Completed(_result);
 
-        private void ExecuteOnce(SqliteCommand command, Query query)
+        public QueryResult RunSync(Query query, SQLiteDatabase database)
+        {
+            using (SqliteCommand command = database.CreateCommand())
+            {
+                return ExecuteOnce(command, query);
+            }
+        }
+
+        protected QueryResult ExecuteOnce(SqliteCommand command, Query query)
         {
             PrepareParameters(command, query);
             try
@@ -91,10 +99,11 @@ namespace Aquiris.SQLite
                     SQLiteLogger.LogPart.newLine,
                     new SQLiteLogger.LogPart("Executed successfully", Color.white));
 
-                _result.value = ExecuteThreaded(command);
+                _result.value = Execute(command);
                 _result.success = true;
                 _result.errorCode = SQLiteErrorCode.Ok;
                 _result.errorMessage = null;
+                return _result;
             }
             catch (SqliteException ex)
             {
@@ -109,6 +118,7 @@ namespace Aquiris.SQLite
                 _result.errorCode = ex.ErrorCode;
                 _result.errorMessage = ex.Message;
                 _result.value = null;
+                return _result;
             }
         }
 
