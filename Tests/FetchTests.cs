@@ -65,6 +65,16 @@ namespace Aquiris.SQLite.Tests
                 Assert.IsTrue(results[0].ContainsKey("Column2"));
                 Assert.IsTrue(results[0].ContainsKey("Column3"));
             });
+            
+            QueryResult syncResult = SQLiteFetch.SyncRun(query, _database);
+            Assert.IsTrue(syncResult.success);
+            Assert.IsNotNull(syncResult.value);
+
+            List<Dictionary<string, object>> syncResults = (List<Dictionary<string, object>>) syncResult.value;
+            Assert.AreEqual(itemCount, syncResults.Count);
+            Assert.IsTrue(syncResults[0].ContainsKey("Column1"));
+            Assert.IsTrue(syncResults[0].ContainsKey("Column2"));
+            Assert.IsTrue(syncResults[0].ContainsKey("Column3"));
         }
         
         private static SQLiteTable GetTable()

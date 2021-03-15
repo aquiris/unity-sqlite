@@ -14,7 +14,7 @@ namespace Aquiris.SQLite.Deletion
             Run(query, database);
         }
         
-        protected override object ExecuteThreaded(SqliteCommand command)
+        protected override object Execute(SqliteCommand command)
         {
             return command.ExecuteNonQuery();
         }
